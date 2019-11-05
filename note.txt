@@ -28,3 +28,26 @@ git add .
 git commit -m "first commit"
 git remote add origin https://github.com/fruit13ok/chain_scrape.git
 git push -u origin master
+
+// deploy to digital ocean
+login to droplet
+ssh root@138.68.234.14
+<password>
+git clone https://github.com/fruit13ok/chain_scrape.git
+cd chain_scrape
+npm install
+// test run (will end when logout droplet)
+node server
+go to http://138.68.234.14:8000/
+click details, click visit this unsafe site
+// end server
+control-c
+// run in the background as a service (will keep running after logout droplet)
+// check pm2, and quit
+pm2 monit
+control-c
+// run server with pm2
+pm2 start server/index.js
+// logout droplet
+exit
+go to http://138.68.234.14:8000/
