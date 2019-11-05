@@ -1,0 +1,30 @@
+// to begin this project
+mkdir chain_scrape
+cd chain_scrape
+code .
+npm init -y
+npm install express puppeteer body-parser node-fetch --save
+npm install nodemon --save-dev
+// in package.json
+    "start-dev": "nodemon server"
+npm run start-dev
+
+// changes for deploy to digital ocean
+// in app.js
+    // let backendRoute = new URL("http://localhost:8000/api");
+    let backendRoute = new URL("http://138.68.234.14:8000/api");
+// in index.js
+    // const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
+
+// github repo
+echo "# chain_scrape" >> README.md
+touch .gitignore
+// in .gitignore
+    # dependencies
+    /node_modules
+git init
+git add .
+git commit -m "first commit"
+git remote add origin https://github.com/fruit13ok/chain_scrape.git
+git push -u origin master
