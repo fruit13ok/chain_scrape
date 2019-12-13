@@ -14,12 +14,22 @@
 
     <form action="/">
         Search key: <input type="text" name="searchKey" value="Megafauna">
+        <hr>
         <input type="radio" name="searchDepth" value="0" checked="checked" id="r1">
-        <label for="r1">Only search input</label>
+        <label for="r1">Search input</label>
         <input type="radio" name="searchDepth" value="1" id="r2">
-        <label for="r2">Search input and input's result</label>
+        <label for="r2">Search input and its result</label>
         <input type="radio" name="searchDepth" value="2" id="r3">
-        <label for="r3">Search input, input's result, and input's result's result</label>
+        <label for="r3">Search input, its result, and result's result</label>
+        <input type="radio" name="searchDepth" value="3" id="r4">
+        <label for="r4">Search input, 3 level deep of result</label>
+        <input type="radio" name="searchDepth" value="4" id="r5">
+        <label for="r5">Search input, 4 level deep of result</label>
+        <hr>
+        <input type="radio" name="rawDataOrCount" value="raw" checked="checked" id="r01">
+        <label for="r01">With duplicate data</label>
+        <input type="radio" name="rawDataOrCount" value="count" id="r02">
+        <label for="r02">Unique data with count</label>
     </form>
     <button class="btn btn-primary mt-3 mb-3">Submit</button>
 	<p class="h3">Keyword Strength</p>

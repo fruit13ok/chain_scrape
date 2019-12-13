@@ -40,13 +40,20 @@ app.listen(port, () => {
 // http request will end before it is done
 let setNumOfSearchAppend = (searchDepth) => {
     if(searchDepth == 0){
+        // Search only input (1)
         return 0;
     }else if(searchDepth == 1){
+        // Search input and its result (1+8)
         return 1;
     }else if(searchDepth == 2){
+        // Search input, its result, and result's result (1+8+64)
         return 9;
     }else if(searchDepth == 3){
+        // Search input, 3 level deep of result (1+8+64+512)
         return 73;
+    }else if(searchDepth == 4){
+        // Search input, 4 level deep of result (1+8+64+512+4096)
+        return 585;
     }
 };
 
@@ -115,6 +122,8 @@ app.get('/', function (req, res) {
 // search depth determine how many time search results push into search list as search keys,
 // return array of object with searchKey and count to frontend
 app.post('/api', async function (req, res) {
+    // req.setTimeout(500000);
+    req.setTimeout(0);
     let numOfLoop = 0;
     let existIndex = -1;
     let curSearchKey = req.body.searchKey;
@@ -127,6 +136,7 @@ app.post('/api', async function (req, res) {
     let numOfSearchAppend = setNumOfSearchAppend(searchDepth);
     let resultList = [curSearchKey];
     console.log('list start: ',searchList);
+    let rawDataOrCount = req.body.rawDataOrCount;
     let tryLoop = async () => {
         while (searchList.length) {
             curSearchKey = searchList[0];
@@ -165,6 +175,21 @@ app.post('/api', async function (req, res) {
     tryLoop()
     .then((rlist) => {
         console.log('list end: ', rlist);
-        res.status(200).send(wordCountObj(rlist));
+        if(rawDataOrCount === 'raw'){
+            rlist.sort((a,b)=>{
+                let resultA = a.toUpperCase();
+                let resultB = b.toUpperCase();
+                if (resultA < resultB) {
+                    return -1;
+                }
+                if (resultA > resultB) {
+                    return 1;
+                }
+                return 0;
+            });
+            res.status(200).send(rlist);
+        }else{
+            res.status(200).send(wordCountObj(rlist));
+        }
     });
 })

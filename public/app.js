@@ -50,6 +50,8 @@ $(document).ready(function(){
             map[obj.name] = obj.value;
             return map;
         }, {});
+        document.getElementById('result-list').innerHTML = 
+        '<p style="color:blue;font-size:46px;"><strong> ... Scraping please wait ... </strong></p>';
         console.log('formObj',formObj);
         getScrape(backendRoute, formObj);
     });
