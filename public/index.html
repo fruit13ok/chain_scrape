@@ -1,7 +1,7 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Scrape search results and result's results</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,6 +9,9 @@
     <script src="./app.js" defer></script>
 </head>
 <body>
+<div class="container pt-5">
+<div class="shadow jumbotron rounded">
+
     <form action="/">
         Search key: <input type="text" name="searchKey" value="Megafauna">
         <input type="radio" name="searchDepth" value="0" checked="checked" id="r1">
@@ -18,7 +21,11 @@
         <input type="radio" name="searchDepth" value="2" id="r3">
         <label for="r3">Search input, input's result, and input's result's result</label>
     </form>
-    <button>Submit</button>
+    <button class="btn btn-primary mt-3 mb-3">Submit</button>
+	<p class="h3">Keyword Strength</p>
+	<hr>
     <div id='result-list'></div>
+</div>
+</div>
 </body>
 </html>

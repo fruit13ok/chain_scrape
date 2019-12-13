@@ -1,5 +1,4 @@
 console.log("Sanity Check: JS is working!");
-
 // let backendRoute = new URL("http://localhost:8000/api");
 let backendRoute = new URL("http://138.68.234.14:8000/api");
 
@@ -29,9 +28,11 @@ const getScrape = async (backendRoute, formObj) => {
         let mList = document.getElementById('result-list');
         mList.innerHTML = '';
         let ul = document.createElement('ul');
+	ul.className = 'list-group';
         mList.appendChild(ul);
         for(let i=0; i<json.length; i++){
             let li = document.createElement('li');
+	li.className = 	'list-group-item';
             ul.appendChild(li);
             li.innerHTML += JSON.stringify(json[i])+',';
         }

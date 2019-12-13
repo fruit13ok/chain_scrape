@@ -13,6 +13,7 @@ const port = process.env.PORT || 8000;
 
 // MIDDLEWARE
 app.use(express.static(path.join(__dirname, '../public')));
+app.use('/css', express.static(__dirname + '../node_modules/bootstrap/dist/css'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 // allow cors to access this backend
