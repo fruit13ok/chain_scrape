@@ -175,7 +175,7 @@ app.post('/api', async function (req, res) {
     tryLoop()
     .then((rlist) => {
         console.log('list end: ', rlist);
-        if(rawDataOrCount === 'raw'){
+        if(rawDataOrCount == 'raw'){
             rlist.sort((a,b)=>{
                 let resultA = a.toUpperCase();
                 let resultB = b.toUpperCase();

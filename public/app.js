@@ -1,6 +1,6 @@
 console.log("Sanity Check: JS is working!");
-// let backendRoute = new URL("http://localhost:8000/api");
-let backendRoute = new URL("http://138.68.234.14:8000/api");
+let backendRoute = new URL("http://localhost:8000/api");
+// let backendRoute = new URL("http://138.68.234.14:8000/api");
 
 // this frontend scrape function do post request to backend scrape route,
 // pass in back end route and form object of search key and search depth
