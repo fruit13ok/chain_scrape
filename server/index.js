@@ -175,7 +175,7 @@ app.post('/api', async function (req, res) {
     tryLoop()
     .then((rlist) => {
         console.log('list end: ', rlist);
-        if(rawDataOrCount == 'raw'){
+        if(rawDataOrCount === 'raw'){
             rlist.sort((a,b)=>{
                 let resultA = a.toUpperCase();
                 let resultB = b.toUpperCase();
@@ -192,4 +192,70 @@ app.post('/api', async function (req, res) {
             res.status(200).send(wordCountObj(rlist));
         }
     });
+})
+
+let scrape2 = async (targetPage, searchKeys) => {
+    // const browser = await puppeteer.launch({ headless: false });
+    // const browser = await puppeteer.launch({ devtools: true });
+    // const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox', '--blink-settings=imagesEnabled=false']});
+    const page = await browser.newPage();
+    if(targetPage.startsWith('https://www.')){
+        console.log('https://www.');
+    }else if(targetPage.startsWith('http://www.')){
+        console.log('http://www.');
+        targetPage='https://www.'+targetPage.slice(11);
+    }else if(targetPage.startsWith('www.')){
+        console.log('www.');
+        targetPage='https://'+targetPage;
+    }else{
+        targetPage='https://www.'+targetPage;
+    }
+    await page.goto(targetPage);
+    // await page.waitForNavigation({ waitUntil: 'domcontentloaded' });
+    // await page.waitForNavigation({ waitUntil: 'networkidle2' });
+    // await page.waitFor(10000);
+
+    // RegExp need to improve later for a better match
+    // this get all innertext of the page as single string might not have space
+    const text = await page.$eval('*', el => el.innerText);
+    console.log('text: ', text);
+    let resultArr = [];
+    for(let searchKey of searchKeys){
+        let regex = new RegExp( searchKey, 'gi' );
+        let found = text.match(regex) || [];    // if null set to empty array
+        let count = found.length;
+        // let count = (text.match(/\scoffee\s/gi)).length;
+        resultArr.push({'searchKey': searchKey, 'count': count});
+    }
+    console.log(resultArr);
+    await page.close();
+	await browser.close();
+    return resultArr;
+    // this return all links
+    // const hrefs = await page.$$eval('a', as => as.map(a => a.href));
+    // console.log('hrefs: ',hrefs);
+};
+
+app.post('/api2', async function (req, res) {
+    // req.setTimeout(500000);
+    req.setTimeout(0);
+    let targetPage = req.body.targetPage;
+    let searchKeys = req.body.searchKeys;
+    console.log(searchKeys);
+    searchKeys = searchKeys.split(",");
+    // searchKeys = ["GIFT CARDS"];
+    await scrape2(targetPage, searchKeys)
+    .then((resultArr)=>{
+        res.status(200).send(resultArr);
+    });
+    // let getAllLinks = async () => {
+    //     // while
+    //     //  scrape
+    // }
+    // getAllLinks()
+    // .then((rlist) => {
+    //     console.log('list end: ', rlist);
+    //     res.status(200).send(rlist);
+    // });
 })

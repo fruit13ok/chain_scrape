@@ -51,3 +51,8 @@ pm2 start server/index.js
 // logout droplet
 exit
 go to http://138.68.234.14:8000/
+// after change serverside code, either reload or restart server
+// have more uptime, at least keep one service running, restart services one by one
+pm2 reload server/index.js
+// restart all
+pm2 restart server/index.js

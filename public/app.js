@@ -1,6 +1,7 @@
 console.log("Sanity Check: JS is working!");
-// let backendRoute = new URL("http://localhost:8000/api");
-let backendRoute = new URL("http://138.68.234.14:8000/api");
+let backendRoute = new URL("http://localhost:8000/api");
+let backendRoute2 = new URL("http://localhost:8000/api2");
+// let backendRoute = new URL("http://138.68.234.14:8000/api");
 
 // this frontend scrape function do post request to backend scrape route,
 // pass in back end route and form object of search key and search depth
@@ -28,11 +29,39 @@ const getScrape = async (backendRoute, formObj) => {
         let mList = document.getElementById('result-list');
         mList.innerHTML = '';
         let ul = document.createElement('ul');
-	ul.className = 'list-group';
+	    ul.className = 'list-group';
         mList.appendChild(ul);
         for(let i=0; i<json.length; i++){
             let li = document.createElement('li');
-	li.className = 	'list-group-item';
+	        li.className = 	'list-group-item';
+            ul.appendChild(li);
+            li.innerHTML += JSON.stringify(json[i])+',';
+        }
+    }catch (error) {
+        console.log(error);
+    }
+};
+const getScrape2 = async (backendRoute2, formObj) => {
+    try {
+        const response = await fetch(backendRoute2, {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify(formObj), // data can be `string` or {object}!
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
+        console.log('response',response);
+        let json = await response.json();
+        console.log('json',json);
+        let mList = document.getElementById('result-list');
+        mList.innerHTML = '';
+        let ul = document.createElement('ul');
+	    ul.className = 'list-group';
+        mList.appendChild(ul);
+        for(let i=0; i<json.length; i++){
+            let li = document.createElement('li');
+	        li.className = 	'list-group-item';
             ul.appendChild(li);
             li.innerHTML += JSON.stringify(json[i])+',';
         }
@@ -42,8 +71,8 @@ const getScrape = async (backendRoute, formObj) => {
 };
 // submit button clicked, pass form data into scrape function and invoke it
 $(document).ready(function(){
-    $("button").click(function(){
-        let formArr = $("form").serializeArray();
+    $("#button1").click(function(){
+        let formArr = $("#form1").serializeArray();
         // console.log('formArr',formArr);
         // convert form array of objects to an object of properties
         let formObj = formArr.reduce((map, obj) => {
@@ -51,8 +80,20 @@ $(document).ready(function(){
             return map;
         }, {});
         document.getElementById('result-list').innerHTML = 
-        '<p style="color:blue;font-size:46px;"><strong> ... Scraping please wait ... </strong></p>';
+        '<p style="color:blue;font-size:46px;"><strong> ... Find related searchs please wait ... </strong></p>';
         console.log('formObj',formObj);
         getScrape(backendRoute, formObj);
     });
+    $("#button2").click(function(){
+        let formArr = $("#form2").serializeArray();
+        let formObj = formArr.reduce((map, obj) => {
+            map[obj.name] = obj.value;
+            return map;
+        }, {});
+        document.getElementById('result-list').innerHTML = 
+        '<p style="color:blue;font-size:46px;"><strong> ... Search words in a page please wait ... </strong></p>';
+        console.log('formObj',formObj);
+        getScrape2(backendRoute2, formObj);
+    });
 });
+
