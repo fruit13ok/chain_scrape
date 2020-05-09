@@ -102,7 +102,9 @@ let scrape = async (searchWord) => {
         let elements = document.querySelectorAll('.nVcaUb');
         for (var element of elements){
             let temp = element.childNodes[0].textContent;
-            movieList.push(temp);
+            if(temp != "undefined"){
+                movieList.push(temp);
+            }
         }
         return movieList;
     });
@@ -156,7 +158,7 @@ app.post('/api', async function (req, res) {
                 })
                 .then(() => {
                     // console.log('list during update: ',searchList.length);
-                })
+                }).catch(() => {})
             }else{
                 // console.log('it is a duplicate key');
                 existSearchResults = [...uniqueSetListObj[existIndex].searchResults];
@@ -248,7 +250,7 @@ app.post('/api2', async function (req, res) {
     await scrape2(targetPage, searchKeys)
     .then((resultArr)=>{
         res.status(200).send(resultArr);
-    });
+    }).catch(() => {});
     // let getAllLinks = async () => {
     //     // while
     //     //  scrape
