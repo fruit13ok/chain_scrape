@@ -6,6 +6,9 @@ let backendRoute2 = new URL("http://138.68.234.14:8000/api2");
 
 // this frontend scrape function do post request to backend scrape route,
 // pass in back end route and form object of search key and search depth
+let elapsedMinutes;
+let elapsedSeconds;
+
 const getScrape = async (backendRoute, formObj) => {
     try {
         // 
@@ -23,6 +26,8 @@ const getScrape = async (backendRoute, formObj) => {
         let minutes = Math.floor((timeComplete - timeStart) / 60000);
         let seconds = (((timeComplete - timeStart) % 60000) / 1000).toFixed(0);
 
+	
+
         console.log("scraped time spent: " + minutes + ":" + seconds);
         console.log('response',response);
         let json = await response.json();
@@ -38,12 +43,16 @@ const getScrape = async (backendRoute, formObj) => {
             ul.appendChild(li);
             li.innerHTML += JSON.stringify(json[i])+',';
         }
+	elapsedMinutes = minutes;
+	elapsedSeconds = seconds;
+	document.getElementById('elapsed-time').innerHTML =  '<p><b>Response Time: </b>' + elapsedMinutes + ' minutes and ' + elapsedSeconds + ' seconds</p>';
     }catch (error) {
         console.log(error);
     }
 };
 const getScrape2 = async (backendRoute2, formObj) => {
     try {
+	let timeStart = performance.now();
         const response = await fetch(backendRoute2, {
             method: 'POST', // or 'PUT'
             body: JSON.stringify(formObj), // data can be `string` or {object}!
@@ -52,6 +61,12 @@ const getScrape2 = async (backendRoute2, formObj) => {
                 'Accept': 'application/json'
             }
         });
+
+	   let timeComplete = performance.now();
+
+        let minutes = Math.floor((timeComplete - timeStart) / 60000);
+        let seconds = (((timeComplete - timeStart) % 60000) / 1000).toFixed(0);
+
         console.log('response',response);
         let json = await response.json();
         console.log('json',json);
@@ -66,10 +81,15 @@ const getScrape2 = async (backendRoute2, formObj) => {
             ul.appendChild(li);
             li.innerHTML += JSON.stringify(json[i])+',';
         }
+	elapsedMinutes = minutes;
+	elapsedSeconds = seconds;
+	document.getElementById('elapsed-time').innerHTML =  '<p><b>Response Time: </b>' + elapsedMinutes + ' minutes and ' + elapsedSeconds + ' seconds</p>';
+
     }catch (error) {
         console.log(error);
     }
 };
+
 // submit button clicked, pass form data into scrape function and invoke it
 $(document).ready(function(){
     $("#button1").click(function(){
@@ -82,7 +102,7 @@ $(document).ready(function(){
         }, {});
         document.getElementById('result-list').innerHTML = 
         '<p style="color:blue;font-size:46px;"><strong> ... Find related searchs please wait ... </strong></p>';
-        console.log('formObj',formObj);
+	        console.log('formObj',formObj);
         getScrape(backendRoute, formObj);
     });
     $("#button2").click(function(){
@@ -93,7 +113,7 @@ $(document).ready(function(){
         }, {});
         document.getElementById('result-list').innerHTML = 
         '<p style="color:blue;font-size:46px;"><strong> ... Search words in a page please wait ... </strong></p>';
-        console.log('formObj',formObj);
+	console.log('formObj',formObj);
         getScrape2(backendRoute2, formObj);
     });
 });
