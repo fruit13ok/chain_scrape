@@ -3,7 +3,7 @@ mkdir chain_scrape
 cd chain_scrape
 code .
 npm init -y
-npm install express puppeteer body-parser node-fetch --save
+npm install express puppeteer body-parser node-fetch cors --save
 npm install nodemon --save-dev
 
 // in package.json
