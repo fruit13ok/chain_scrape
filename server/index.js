@@ -4,6 +4,7 @@ const path = require('path');
 // 3rd party
 const express = require('express');
 const puppeteer = require('puppeteer');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const fetch = require("node-fetch");
 
@@ -14,6 +15,7 @@ const port = process.env.PORT || 8000;
 // MIDDLEWARE
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/css', express.static(__dirname + '../node_modules/bootstrap/dist/css'));
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 // allow cors to access this backend
