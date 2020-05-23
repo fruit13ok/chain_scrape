@@ -10,52 +10,66 @@
 </head>
 <body>
 <div class="container pt-5">
-<div class="shadow jumbotron rounded">
+    <div class="shadow jumbotron rounded">
 
-    <h5>Part 1: Find related searchs.</h5>
-    <form id='form1' action="/">
-        Search key: 
-        <input type="text" name="searchKey" value="Megafauna" style="width:20%;">
-        <br>
-        <input type="radio" name="searchDepth" value="0" checked="checked" id="r1">
-        <label for="r1">Search input</label>
-        <input type="radio" name="searchDepth" value="1" id="r2">
-        <label for="r2">Search input and its result</label>
-        <input type="radio" name="searchDepth" value="2" id="r3">
-        <label for="r3">Search 2 level deep of result</label>
-        <input type="radio" name="searchDepth" value="3" id="r4">
-        <label for="r4">Search 3 level deep of result</label>
-        <input type="radio" name="searchDepth" value="4" id="r5">
-        <label for="r5">Search 4 level deep of result</label>
-        <br>
-        <input type="radio" name="rawDataOrCount" value="raw" checked="checked" id="r01">
-        <label for="r01">With duplicate data</label>
-        <input type="radio" name="rawDataOrCount" value="count" id="r02">
-        <label for="r02">Unique data with count</label>
-        <br>
-    </form>
-    <button id='button1' class="btn btn-primary mt-3 mb-3">Submit</button>
+        <h5>Part 1: Find related searchs.</h5>
+        <form id='form1' action="/">
+            Search key: 
+            <input type="text" name="searchKey" value="Megafauna" style="width:20%;">
+            <br>
+            <input type="radio" name="searchDepth" value="0" checked="checked" id="r1">
+            <label for="r1">Search input</label>
+            <input type="radio" name="searchDepth" value="1" id="r2">
+            <label for="r2">Search input and its result</label>
+            <input type="radio" name="searchDepth" value="2" id="r3">
+            <label for="r3">Search 2 level deep of result</label>
+            <input type="radio" name="searchDepth" value="3" id="r4">
+            <label for="r4">Search 3 level deep of result</label>
+            <input type="radio" name="searchDepth" value="4" id="r5">
+            <label for="r5">Search 4 level deep of result</label>
+            <br>
+            <input type="radio" name="rawDataOrCount" value="raw" checked="checked" id="r01">
+            <label for="r01">With duplicate data</label>
+            <input type="radio" name="rawDataOrCount" value="count" id="r02">
+            <label for="r02">Unique data with count</label>
+            <br>
+        </form>
+        <button id='button1' class="btn btn-primary mt-3 mb-3">Submit</button>
+        <hr>
 
-    <hr>
+        <h5>Part 2: Search words in a page.</h5>
+        <form id='form2' action="/">
+            Target page: 
+            <input type="text" name="targetPage" value="starbucks.com" style="width:20%;">
+            <br>
+            Search keys: 
+            <input type="text" name="searchKeys" value="menu,rewards,gift cards,find a store" style="width:40%;">
+            <br>
+            <span style="color:dimgrey;"><em>Separate each search keys by commas</em></span>
+        </form>
+        <button id='button2' class="btn btn-primary mt-3 mb-3">Submit</button>
+        <hr>
 
-    <h5>Part 2: Search words in a page.</h5>
-    <form id='form2' action="/">
-        Target page: 
-        <input type="text" name="targetPage" value="starbucks.com" style="width:20%;">
+        <h5>Part 3: Find related searchs for 3 keys.</h5>
+        <form id='form3' action="/">
+            Search key1: 
+            <input type="text" name="searchKey1" value="Hydroxychloroquine" style="width:20%;">
+            <br>
+            Search key2:
+            <input type="text" name="searchKey2" value="Warren Buffett" style="width:20%;">
+            <br>
+            Search key3:
+            <input type="text" name="searchKey3" value="three way switch" style="width:20%;">
+        </form>
+        <button id='button3' class="btn btn-primary mt-3 mb-3">Submit</button>
+    </div>
+    <div>
+        <p class="h3">Keyword Strength</p>
+        <hr>
+        <div id='result-list'></div>
         <br>
-        Search keys: 
-        <input type="text" name="searchKeys" value="menu,rewards,gift cards,find a store" style="width:40%;">
-        <br>
-        <span style="color:dimgrey;"><em>Separate each search keys by commas</em></span>
-    </form>
-    <button id='button2' class="btn btn-primary mt-3 mb-3">Submit</button>
-
-	<p class="h3">Keyword Strength</p>
-	<hr>
-    <div id='result-list'></div>
-    <br>
-    <div id='elapsed-time'></div>
-</div>
+        <div id='elapsed-time'></div>
+    </div>
 </div>
 </body>
 </html>

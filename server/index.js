@@ -260,4 +260,50 @@ app.post('/api2', async function (req, res) {
     //     console.log('list end: ', rlist);
     //     res.status(200).send(rlist);
     // });
-})
+});
+
+app.post('/api3', async function (req, res) {
+    let curSearchKey1 = req.body.searchKey1 || "";
+    let curSearchKey2 = req.body.searchKey2 || "";
+    let curSearchKey3 = req.body.searchKey3 || "";
+    let curSearchKeys = [curSearchKey1, curSearchKey2, curSearchKey3]
+    searchResults1 = [curSearchKey1];
+    searchResults2 = [curSearchKey2];
+    searchResults3 = [curSearchKey3];
+    console.log("3 search keys: ", curSearchKeys);
+    let resultList = [];
+    let tryLoop = async () => {
+        for(let i = 0; i < 3; i++){
+            await scrape3(curSearchKeys[i])
+            .then((rlist) => {
+                resultList = [...resultList, {key: curSearchKeys[i], value: rlist}];
+            })
+        }
+        return resultList;
+    }
+    await tryLoop()
+    .then((rlist) => {
+        res.status(200).send(rlist);
+    });
+});
+
+let scrape3 = async (searchWord) => {
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
+    const page = await browser.newPage();
+    await page.goto(`https://www.google.com/search?&q=${searchWord}`);
+
+    const result = await page.evaluate(() => {
+        let movieList = [];
+        let elements = document.querySelectorAll('.nVcaUb');
+        for (var element of elements){
+            let temp = element.childNodes[0].textContent;
+            if(temp != "undefined"){
+                movieList.push(temp);
+            }
+        }
+        return movieList;
+    });
+    await page.close();
+    await browser.close();
+    return result;
+};

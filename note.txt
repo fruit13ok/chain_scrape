@@ -5,9 +5,26 @@ code .
 npm init -y
 npm install express puppeteer body-parser node-fetch --save
 npm install nodemon --save-dev
+
 // in package.json
     "start-dev": "nodemon server"
+
+// create basic back end and front end directories and files
+mkdir server
+touch server/index.js
+mkdir public
+touch public/app.js public/index.html
+
+// 
+test basic GET POST code 
+
+// run the server
 npm run start-dev
+
+// Without front end is ok, this is a back end only project that produce JSON result,
+// This front end got redirected the path is for testing, everything can be test with Postman.
+
+
 
 // changes for deploy to digital ocean
 // in app.js
@@ -71,3 +88,5 @@ Solution:
     EX:
     myAsyncFunction().then().catch(() => {});
 
+
+// implement 3 search scrape, return as array of object with search key and its results
