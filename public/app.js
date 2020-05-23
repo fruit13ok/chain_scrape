@@ -1,10 +1,10 @@
 console.log("Sanity Check: JS is working!");
-let backendRoute = new URL("http://localhost:8000/api");
-let backendRoute2 = new URL("http://localhost:8000/api2");
-let backendRoute3 = new URL("http://localhost:8000/api3");
-// let backendRoute = new URL("http://138.68.234.14:8000/api");
-// let backendRoute2 = new URL("http://138.68.234.14:8000/api2");
-// let backendRoute3 = new URL("http://138.68.234.14:8000/api2");
+// let backendRoute = new URL("http://localhost:8000/api");
+// let backendRoute2 = new URL("http://localhost:8000/api2");
+// let backendRoute3 = new URL("http://localhost:8000/api3");
+let backendRoute = new URL("http://138.68.234.14:8000/api");
+let backendRoute2 = new URL("http://138.68.234.14:8000/api2");
+let backendRoute3 = new URL("http://138.68.234.14:8000/api3");
 
 // this frontend scrape function do post request to backend scrape route,
 // pass in back end route and form object of search key and search depth
