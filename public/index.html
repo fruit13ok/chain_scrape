@@ -6,6 +6,8 @@
     <title>Scrape search results and result's results</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js" integrity="sha256-gJWdmuCRBovJMD9D/TVdo4TIK8u5Sti11764sZT1DhI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.3/jspdf.plugin.autotable.min.js" integrity="sha256-8Wa9evITaf3eZpKzFIrEfVrQycFZ1C/IwuAwUkXnB94=" crossorigin="anonymous"></script>
     <script src="./app.js" defer></script>
 </head>
 <body>
@@ -62,6 +64,15 @@
             <input type="text" name="searchKey3" value="three way switch" style="width:20%;">
         </form>
         <button id='button3' class="btn btn-primary mt-3 mb-3">Submit</button>
+        <hr>
+
+        <h5>Part4: Get all links and their status from given page, convert to PDF</h5>
+        <form id='form4' action="/">
+            Target page: 
+            <input type="text" name="targetPage" value="google.com" style="width:20%;">
+        </form>
+        <button id='button4' class="btn btn-primary mt-3 mb-3">Submit</button>
+
     </div>
     <div>
         <p class="h3">Keyword Strength</p>

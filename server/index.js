@@ -76,6 +76,32 @@ let wordCountObj = (arrStrs) => {
     return arrObjs;
 };
 
+// check URL status code
+let checkUrl = async (url) => {
+    try {
+        const response = await fetch(url);
+        const status = await response.status;
+        return status.toString();
+    }catch (error) {
+        console.log(error);
+        return error;
+    }
+};
+
+// return result array of objects
+let forLoop = async (resultArr) => {
+    let resultArray = [];
+    for (let i = 0; i < resultArr.length; i++) {
+        let curUrl = resultArr[i];
+        let curStatus = await checkUrl(curUrl);
+        resultArray.push({url: curUrl, status: curStatus});
+    }
+    return resultArray;
+}
+
+
+// scrape and post, later need to break them into their own files
+
 // the puppeteer filter doesn't work
 let scrape = async (searchWord) => {
     const blockedResourceTypes = ['image','media','font','stylesheet'];
@@ -264,6 +290,28 @@ app.post('/api2', async function (req, res) {
     // });
 });
 
+
+let scrape3 = async (searchWord) => {
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
+    const page = await browser.newPage();
+    await page.goto(`https://www.google.com/search?&q=${searchWord}`);
+
+    const result = await page.evaluate(() => {
+        let movieList = [];
+        let elements = document.querySelectorAll('.nVcaUb');
+        for (var element of elements){
+            let temp = element.childNodes[0].textContent;
+            if(temp != "undefined"){
+                movieList.push(temp);
+            }
+        }
+        return movieList;
+    });
+    await page.close();
+    await browser.close();
+    return result;
+};
+
 app.post('/api3', async function (req, res) {
     let curSearchKey1 = req.body.searchKey1 || "";
     let curSearchKey2 = req.body.searchKey2 || "";
@@ -289,23 +337,48 @@ app.post('/api3', async function (req, res) {
     });
 });
 
-let scrape3 = async (searchWord) => {
-    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
+// scrape for all "a" tag's "href" content of given page
+// standard the page
+let scrape4 = async (targetPage) => {
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox', '--blink-settings=imagesEnabled=false']});
     const page = await browser.newPage();
-    await page.goto(`https://www.google.com/search?&q=${searchWord}`);
-
-    const result = await page.evaluate(() => {
-        let movieList = [];
-        let elements = document.querySelectorAll('.nVcaUb');
-        for (var element of elements){
-            let temp = element.childNodes[0].textContent;
-            if(temp != "undefined"){
-                movieList.push(temp);
-            }
-        }
-        return movieList;
+    if(targetPage.startsWith('https://www.')){
+        console.log('https://www.');
+    }else if(targetPage.startsWith('http://www.')){
+        console.log('http://www.');
+        targetPage='https://www.'+targetPage.slice(11);
+    }else if(targetPage.startsWith('www.')){
+        console.log('www.');
+        targetPage='https://'+targetPage;
+    }else{
+        targetPage='https://www.'+targetPage;
+    }
+    // await page.goto(targetPage);
+    await page.goto(targetPage, {
+        waitUntil: 'networkidle2',
+        timeout: 30000
     });
-    await page.close();
-    await browser.close();
-    return result;
+
+    //either of these 3 ways return all links
+    const hrefs = await page.$$eval('a', as => as.map(a => a.href));
+    // const hrefs = await page.evaluate(() => {
+    //     return Array.from(document.getElementsByTagName('a'), a => a.href);
+    // });
+    // const hrefs = await Promise.all((await page.$$('a')).map(async a => {
+    //     return await (await a.getProperty('href')).jsonValue();
+    // }));
+    console.log('hrefs: ',hrefs.length, hrefs);
+    return hrefs;
 };
+
+app.post('/api4', async function (req, res) {
+    req.setTimeout(0);
+    let targetPage = req.body.targetPage || "";
+    await scrape4(targetPage)
+    .then((resultArr)=>{
+        forLoop(resultArr)
+        .then(resultArray => {
+            res.send(resultArray);
+        })
+    }).catch(() => {});    
+});

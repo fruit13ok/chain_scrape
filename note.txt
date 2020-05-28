@@ -90,3 +90,7 @@ Solution:
 
 
 // implement 3 search scrape, return as array of object with search key and its results
+
+// implement all links scrape, return all links of the page and status code, convert to PDF
+    npm install jspdf jspdf-autotable --save
+    // also use CDN in html file
