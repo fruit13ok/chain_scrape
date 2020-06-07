@@ -94,3 +94,6 @@ Solution:
 // implement all links scrape, return all links of the page and status code, convert to PDF
     npm install jspdf jspdf-autotable --save
     // also use CDN in html file
+
+// implement JSON to CSV
+    // see all_links repo

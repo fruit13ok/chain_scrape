@@ -16,6 +16,40 @@ let elapsedSeconds;
 // variable for api4 might want to put it with in, not up here
 let jsonResult = [];
 
+// converter JSON to CSV return string
+const ConvertToCSV = (objArray) => {
+    console.log('objArray: ', objArray);
+    let array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+    console.log('array: ', array);
+    console.log('keys: ', Object.keys(array[0]).join());
+    let str = Object.keys(array[0]).join()+'\r\n';
+    for (let i = 0; i < array.length; i++) {
+        console.log(i,': ', array[i]);
+        let line = '';
+        for (let index in array[i]) {
+            if (line != '') {
+            line += ',';
+            }
+            line += array[i][index];
+            console.log(index,': ', line);
+        }
+            str += line + '\r\n';
+    }
+    return str;
+};
+
+// html attribute download file
+// https://stackoverflow.com/questions/3665115/how-to-create-a-file-in-memory-for-user-to-download-but-not-through-server
+const download = (filename, text) => {
+    let element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+};
+
 const getScrape = async (backendRoute, formObj) => {
     try {
         // 
@@ -141,13 +175,21 @@ const getScrape4 = async (backendRoute4, formObj) => {
         console.log('json',json);
         let mList = document.getElementById('result-list');
         mList.innerHTML = '';
-        let button = document.createElement('button');
-        button.id = "cmd";
-        button.innerHTML = "Download PDF";
-        button.className = "btn btn-info mt-2 mb-2";
+        let buttonPDF = document.createElement('button');
+        buttonPDF.id = "btnpdf";
+        buttonPDF.innerHTML = "Download PDF";
+        buttonPDF.className = "btn btn-info mt-2 mb-2";
+        let buttonCSV = document.createElement('button');
+        buttonCSV.id = "btncsv";
+        buttonCSV.innerHTML = "Download CSV";
+        buttonCSV.className = "btn btn-info mt-2 mb-2";
         let pre = document.createElement('pre');
         pre.innerHTML = JSON.stringify(json, null, 4);
-        mList.appendChild(button);
+        let span = document.createElement('span');
+        span.innerHTML = ' ';
+        mList.appendChild(buttonPDF);
+        mList.appendChild(span);
+        mList.appendChild(buttonCSV);
         mList.appendChild(pre);
         jr = json;
     }catch (error) {
@@ -214,7 +256,7 @@ $(document).ready(function(){
     });
     // need start with static element for event binding on dynamically created elements
     // Default export is a4 paper, portrait, using millimeters for units
-    $("#result-list").on("click", "#cmd", function(){
+    $("#result-list").on("click", "#btnpdf", function(){
         console.log('jsonResult: ',jsonResult);
         // better version use "jsPDF Autotable"
         // for simpler versions see my repo "try_jspdf" or "all_links"
@@ -238,5 +280,12 @@ $(document).ready(function(){
             columnStyles: {0: {cellWidth: 150}}
         })
         doc.save('test.pdf')
+    });
+    
+    // onclick convert JSON to CSV and download it
+    $("#result-list").on("click", "#btncsv", function(){
+        var jsonObject = JSON.stringify(jsonResult);
+        var text = ConvertToCSV(jsonObject);
+        download('test.csv', text);
     });
 });
