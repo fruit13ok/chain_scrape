@@ -205,22 +205,23 @@ app.post('/api', async function (req, res) {
     tryLoop()
     .then((rlist) => {
         console.log('list end: ', rlist);
-        if(rawDataOrCount === 'raw'){
-            rlist.sort((a,b)=>{
-                let resultA = a.toUpperCase();
-                let resultB = b.toUpperCase();
-                if (resultA < resultB) {
-                    return -1;
-                }
-                if (resultA > resultB) {
-                    return 1;
-                }
-                return 0;
-            });
-            res.status(200).send(rlist);
-        }else{
+        // now on html, I am not using raw result, only using count result
+        // if(rawDataOrCount === 'raw'){
+        //     rlist.sort((a,b)=>{
+        //         let resultA = a.toUpperCase();
+        //         let resultB = b.toUpperCase();
+        //         if (resultA < resultB) {
+        //             return -1;
+        //         }
+        //         if (resultA > resultB) {
+        //             return 1;
+        //         }
+        //         return 0;
+        //     });
+        //     res.status(200).send(rlist);
+        // }else{
             res.status(200).send(wordCountObj(rlist));
-        }
+        // }
     });
 })
 

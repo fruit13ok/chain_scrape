@@ -97,3 +97,6 @@ Solution:
 
 // implement JSON to CSV
     // see all_links repo
+
+// refactor JSON to CSV into function ^_^
+// now part 1 and part 4 of scrape have downloadable PDF and CSV
