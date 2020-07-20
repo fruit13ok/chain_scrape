@@ -7,6 +7,7 @@ const puppeteer = require('puppeteer');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const fetch = require("node-fetch");
+var userAgent = require('user-agents');
 
 // local
 const app = express();
@@ -84,7 +85,8 @@ let checkUrl = async (url) => {
         return status.toString();
     }catch (error) {
         console.log(error);
-        return error;
+        // return error;
+        return "598";
     }
 };
 
@@ -97,6 +99,17 @@ let forLoop = async (resultArr) => {
         resultArray.push({url: curUrl, status: curStatus});
     }
     return resultArray;
+}
+
+// as alternative to addUniqueResult() remove duuplicate at the end
+let removeDuplicateResult = (allResult) => {
+    const seen = new Set();
+    const filteredArr = allResult.filter(el => {
+        const duplicate = seen.has(el.url);
+        seen.add(el.url);
+        return !duplicate;
+    });
+    return filteredArr;
 }
 
 
@@ -382,4 +395,79 @@ app.post('/api4', async function (req, res) {
             res.send(resultArray);
         })
     }).catch(() => {});    
+});
+
+//
+let scrape5 = async (searchKey, startResultNum) => {
+    const blockedResourceTypes = ['image','media','font','stylesheet'];
+    let BASE_URL = `https://www.google.com/search?q=${searchKey}&tbs=li:1&start=${startResultNum}`;
+    // let BASE_URL = `https://www.google.com/search?q=${searchKey}&start=${startResultNum}`;
+    // let BASE_URL = `https://www.google.com/search?q=${searchKey}&tbs=li:1&num=100`;
+    // const browser = await puppeteer.launch({args: ['--proxy-server=50.235.149.74:8080', '--no-sandbox', '--disable-setuid-sandbox', '--blink-settings=imagesEnabled=false']});
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox', '--blink-settings=imagesEnabled=false']});
+    // const browser = await puppeteer.launch({ headless: false, args: ['--proxy-server=50.235.149.74:8080'] });
+    // const browser = await puppeteer.launch({ headless: false });
+    const page = await browser.newPage();
+    // to bypass recaptcha use "user-agents" to generate random userAgent on each scrape
+    await page.setUserAgent(userAgent.random().toString());
+    await page.setRequestInterception(true);
+    page.on('request', (request) => {
+        if(blockedResourceTypes.indexOf(request.resourceType()) !== -1){
+            request.abort();
+        }
+        else {
+            request.continue();
+        }
+    });
+    await page.goto(BASE_URL, {
+        waitUntil: 'networkidle2',
+    });
+    //
+    const result = await page.evaluate(() => {
+        let aList = [];
+        let elements = document.querySelectorAll('#rso > .g > .rc > .r > a');
+        // console.log("elements: ",elements);
+        for (var element of elements){
+            console.log("element: ", element.href);
+            aList.push(element.href);
+        }
+        return aList;
+    });
+    // close when is done
+    await browser.close();
+    return result;
+};
+//
+app.post('/api5', async function (req, res) {
+    req.setTimeout(0);
+    // let searchKey = req.body.targetPage2 || "";
+    let searchKey = req.body.targetPage2;
+    let startResultNumber = 0;
+    //
+    let result = [{ url: '', status: '' }];
+    let allResult = [];
+    let tryLoop = async () => {
+        while (result.length) {
+            //
+            await scrape5(searchKey, startResultNumber)
+            .then((resultArr)=>{
+                forLoop(resultArr)
+                .then(resultArray => {
+                    // append to all result
+                    console.log("resultArray", resultArray);
+                    allResult = [...allResult,...resultArray];
+                    // loop control
+                    result = [...resultArray];
+                    // result = []; // test loop once
+                    startResultNumber=startResultNumber+10;
+                })
+            }).catch(() => {});
+        }
+        return allResult;
+    }
+    tryLoop()
+    .then((rlist) => {
+        console.log('list end: ', rlist);
+        res.send(removeDuplicateResult(rlist));
+    });
 });

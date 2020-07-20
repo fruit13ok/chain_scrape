@@ -1,12 +1,15 @@
 console.log("Sanity Check: JS is working!");
-// let backendRoute = new URL("http://localhost:8000/api");
-// let backendRoute2 = new URL("http://localhost:8000/api2");
-// let backendRoute3 = new URL("http://localhost:8000/api3");
-// let backendRoute4 = new URL("http://localhost:8000/api4");
-let backendRoute = new URL("http://138.68.234.14:8000/api");
-let backendRoute2 = new URL("http://138.68.234.14:8000/api2");
-let backendRoute3 = new URL("http://138.68.234.14:8000/api3");
-let backendRoute4 = new URL("http://138.68.234.14:8000/api4");
+let backendRoute = new URL("http://localhost:8000/api");
+let backendRoute2 = new URL("http://localhost:8000/api2");
+let backendRoute3 = new URL("http://localhost:8000/api3");
+let backendRoute4 = new URL("http://localhost:8000/api4");
+let backendRoute5 = new URL("http://localhost:8000/api5");
+
+// let backendRoute = new URL("http://138.68.234.14:8000/api");
+// let backendRoute2 = new URL("http://138.68.234.14:8000/api2");
+// let backendRoute3 = new URL("http://138.68.234.14:8000/api3");
+// let backendRoute4 = new URL("http://138.68.234.14:8000/api4");
+// let backendRoute5 = new URL("http://138.68.234.14:8000/api5");
 
 // this frontend scrape function do post request to backend scrape route,
 // pass in back end route and form object of search key and search depth
@@ -226,6 +229,35 @@ const getScrape4 = async (backendRoute4, formObj) => {
     return jResult;
 };
 
+const getScrape5 = async (backendRoute5, formObj) => {
+    let jResult = [];
+    try {
+        const response = await fetch(backendRoute5, {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify(formObj), // data can be `string` or {object}!
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
+
+        console.log('response',response);
+        let json = await response.json();
+        console.log('json',json);
+        let mList = document.getElementById('result-list');
+        mList.innerHTML = '';
+        // add downloadable buttons PDF CSV
+        // generateDownloadButtons(mList);
+        let pre = document.createElement('pre');
+        pre.innerHTML = JSON.stringify(json, null, 4);
+        mList.appendChild(pre);
+        jResult = json;
+    }catch (error) {
+        console.log(error);
+    }
+    return jResult;
+};
+
 // submit button clicked, pass form data into scrape function and invoke it
 $(document).ready(function(){
 
@@ -284,6 +316,22 @@ $(document).ready(function(){
         // async function have to be call inside async function, so use a iife empty function here
         (async () => {
             jsonResult = await getScrape4(backendRoute4, formObj)
+        })();
+    });
+
+    $("#button5").click(function(){
+        let formArr = $("#form5").serializeArray();
+        // convert form array of objects to an object of properties
+        let formObj = formArr.reduce((map, obj) => {
+            map[obj.name] = obj.value;
+            return map;
+        }, {});
+        document.getElementById('result-list').innerHTML = 
+        '<p style="color:blue;font-size:46px;"><strong> ... Searching please wait ... </strong></p>';
+        console.log('formObj',formObj);
+        // async function have to be call inside async function, so use a iife empty function here
+        (async () => {
+            jsonResult = await getScrape5(backendRoute5, formObj)
         })();
     });
 

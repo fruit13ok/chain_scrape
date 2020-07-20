@@ -100,3 +100,10 @@ Solution:
 
 // refactor JSON to CSV into function ^_^
 // now part 1 and part 4 of scrape have downloadable PDF and CSV
+
+
+// implement backlinks scrape, return all links from google search with "verbatim" option.
+// see my "backlinks" repo for more info
+// NOTE: some how this scarpe has "recaptcha" issue, 
+// To address "recaptcha" issue, I used "user-agents", "proxy server", and "puppeteer filter"
+npm install user-agents --save
