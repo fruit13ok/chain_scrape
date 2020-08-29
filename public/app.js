@@ -1,15 +1,15 @@
 console.log("Sanity Check: JS is working!");
-// let backendRoute = new URL("http://localhost:8000/api");
-// let backendRoute2 = new URL("http://localhost:8000/api2");
-// let backendRoute3 = new URL("http://localhost:8000/api3");
-// let backendRoute4 = new URL("http://localhost:8000/api4");
-// let backendRoute5 = new URL("http://localhost:8000/api5");
+let backendRoute = new URL("http://localhost:8000/api");
+let backendRoute2 = new URL("http://localhost:8000/api2");
+let backendRoute3 = new URL("http://localhost:8000/api3");
+let backendRoute4 = new URL("http://localhost:8000/api4");
+let backendRoute5 = new URL("http://localhost:8000/api5");
 
-let backendRoute = new URL("http://138.68.234.14:8000/api");
-let backendRoute2 = new URL("http://138.68.234.14:8000/api2");
-let backendRoute3 = new URL("http://138.68.234.14:8000/api3");
-let backendRoute4 = new URL("http://138.68.234.14:8000/api4");
-let backendRoute5 = new URL("http://138.68.234.14:8000/api5");
+// let backendRoute = new URL("http://138.68.234.14:8000/api");
+// let backendRoute2 = new URL("http://138.68.234.14:8000/api2");
+// let backendRoute3 = new URL("http://138.68.234.14:8000/api3");
+// let backendRoute4 = new URL("http://138.68.234.14:8000/api4");
+// let backendRoute5 = new URL("http://138.68.234.14:8000/api5");
 
 // this frontend scrape function do post request to backend scrape route,
 // pass in back end route and form object of search key and search depth
@@ -247,7 +247,7 @@ const getScrape5 = async (backendRoute5, formObj) => {
         let mList = document.getElementById('result-list');
         mList.innerHTML = '';
         // add downloadable buttons PDF CSV
-        // generateDownloadButtons(mList);
+        generateDownloadButtons(mList);
         let pre = document.createElement('pre');
         pre.innerHTML = JSON.stringify(json, null, 4);
         mList.appendChild(pre);

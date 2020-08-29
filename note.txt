@@ -3,7 +3,7 @@ mkdir chain_scrape
 cd chain_scrape
 code .
 npm init -y
-npm install express puppeteer body-parser node-fetch cors --save
+npm install express puppeteer body-parser node-fetch cors abort-controller --save
 npm install nodemon --save-dev
 
 // in package.json
@@ -107,3 +107,8 @@ Solution:
 // NOTE: some how this scarpe has "recaptcha" issue, 
 // To address "recaptcha" issue, I used "user-agents", "proxy server", and "puppeteer filter"
 npm install user-agents --save
+
+/////////////////// this version overview ///////////////////
+-took care off recaptcha by not using url parameter to search,
+-took care off many request cases,
+-same search will cause url status codes '408 Request Timeout' on good links,
