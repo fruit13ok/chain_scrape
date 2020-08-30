@@ -491,7 +491,7 @@ app.post('/api4', async function (req, res) {
     }).catch(() => {});    
 });
 
-//
+// old version
 // let scrape5 = async (searchKey, startResultNum) => {
 //     const blockedResourceTypes = ['image','media','font','stylesheet'];
 //     let BASE_URL = `https://www.google.com/search?q=${searchKey}&tbs=li:1&start=${startResultNum}`;
@@ -531,7 +531,6 @@ app.post('/api4', async function (req, res) {
 //     await browser.close();
 //     return result;
 // };
-
 let scrape5 = async (searchKey) => {
 // async function scrape (searchKey) {
     // const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox', '--blink-settings=imagesEnabled=false']});
@@ -579,7 +578,7 @@ let scrape5 = async (searchKey) => {
     return urls;
 };
 
-//
+// old version
 // app.post('/api5', async function (req, res) {
 //     req.setTimeout(0);
 //     // let searchKey = req.body.targetPage2 || "";
@@ -615,7 +614,7 @@ let scrape5 = async (searchKey) => {
 // });
 app.post('/api5', async function (req, res) {
     req.setTimeout(0);
-    let searchKey = req.body.searchKey || "";
+    let searchKey = req.body.targetPage2 || "";
     const urls = await scrape5(searchKey);
     // console.log(urls);
     // res.send(urls);
