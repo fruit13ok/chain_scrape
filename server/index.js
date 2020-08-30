@@ -533,9 +533,9 @@ app.post('/api4', async function (req, res) {
 // };
 let scrape5 = async (searchKey) => {
 // async function scrape (searchKey) {
-    // const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox', '--blink-settings=imagesEnabled=false']});
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox', '--blink-settings=imagesEnabled=false'], slowMo: 100});
     // const browser = await puppeteer.launch({headless: false, slowMo: 100});
-    const browser = await puppeteer.launch({slowMo: 100}); // need to slow down to content load
+    // const browser = await puppeteer.launch({slowMo: 100}); // need to slow down to content load
 
     const page = await browser.newPage();
     // deal with navigation and page timeout, see the link
