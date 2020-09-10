@@ -75,7 +75,7 @@ const tohttps = (url) => {
 const urlLoop = async (urls) => {
     // wait for non-responsive url for at least 1 second, 
     // less than that could mistreat good url
-    let waitTime = 10000;
+    let waitTime = 5000;
     setTimeout(() => { controller.abort(); }, waitTime);
     // check URL status code return array of fetches promise
     let checkUrl = urls.map(url => fetch(tohttps(url), {
@@ -581,19 +581,22 @@ let scrape5 = async (searchKey) => {
     await page.click('ul > li#li_1');
     await navigationPromise;
 
+    let counter = 0;
     let urls = [];
     let hasNext = true
     while(hasNext) {
-      const searchResults = await page.$$('#rso > .g > .rc > .r > a');
-      // need to convert for loop to async function to wait
-      urls.push(...await forLoop(searchResults));
-      let nextLink = await page.$('a[id="pnnext"]');
-      if (nextLink !== null) {
-          await nextLink.click();
-          await page.waitForNavigation();
-      } else {
-          hasNext = false;
-      }
+        console.log(counter);
+        counter++;
+        const searchResults = await page.$$('#rso > .g > .rc > .r > a');
+        // need to convert for loop to async function to wait
+        urls.push(...await forLoop2(searchResults));
+        let nextLink = await page.$('a[id="pnnext"]');
+        if (nextLink !== null) {
+            await nextLink.click();
+            await page.waitForNavigation();
+        } else {
+            hasNext = false;
+        }
     }
     await browser.close();
     return urls;
