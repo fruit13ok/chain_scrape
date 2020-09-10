@@ -195,6 +195,19 @@ let forLoop = async (resultArr) => {
     }
     return resultArray;
 }
+// return links from current page, use in a loop to accumulate all page links
+// fix short for result problem, 
+// by convert for loop to async function to wait
+const forLoop2 = async (sResults) => {
+    var tempArr=[];
+    for (let result of sResults) {
+        let url = await (await result.getProperty('href')).jsonValue();
+        console.log(url);
+        // urls.push(url);
+        tempArr.push(url);
+    }
+    return tempArr;
+}
 
 // as alternative to addUniqueResult() remove duuplicate at the end
 let removeDuplicateResult = (allResult) => {
@@ -532,7 +545,7 @@ app.post('/api4', async function (req, res) {
 //     return result;
 // };
 let scrape5 = async (searchKey) => {
-// async function scrape (searchKey) {
+    const blockedResourceTypes = ['image','media','font','stylesheet'];
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox', '--blink-settings=imagesEnabled=false'], slowMo: 100});
     // const browser = await puppeteer.launch({headless: false, slowMo: 100});
     // const browser = await puppeteer.launch({slowMo: 100}); // need to slow down to content load
@@ -543,6 +556,17 @@ let scrape5 = async (searchKey) => {
     const navigationPromise =  page.waitForNavigation();
     
     await page.setUserAgent(userAgent.random().toString());
+
+    await page.setRequestInterception(true);
+    page.on('request', (request) => {
+        if(blockedResourceTypes.indexOf(request.resourceType()) !== -1){
+            request.abort();
+        }
+        else {
+            request.continue();
+        }
+    });
+
     await page.goto('https://www.google.com/');
     await navigationPromise;
     await page.type('input[title="Search"]', searchKey, { delay: 50 });
@@ -561,11 +585,8 @@ let scrape5 = async (searchKey) => {
     let hasNext = true
     while(hasNext) {
       const searchResults = await page.$$('#rso > .g > .rc > .r > a');
-      for (let result of searchResults) {
-        let url = await (await result.getProperty('href')).jsonValue();
-        // console.log(url);
-        urls.push(url);
-      }
+      // need to convert for loop to async function to wait
+      urls.push(...await forLoop(searchResults));
       let nextLink = await page.$('a[id="pnnext"]');
       if (nextLink !== null) {
           await nextLink.click();

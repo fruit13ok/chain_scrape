@@ -112,3 +112,6 @@ npm install user-agents --save
 -took care off recaptcha by not using url parameter to search,
 -took care off many request cases,
 -same search will cause url status codes '408 Request Timeout' on good links,
+
+//////////////////////////////////////////////////////
+backlinks, fix missing early result, not wait before loop
