@@ -218,8 +218,8 @@ const forLoop2 = async (sResults) => {
     for (let result of sResults) {
         let url = await (await result.getProperty('href')).jsonValue();
         let aText = await result.$eval('h3', i => i.innerText);
-        // console.log(url);
-        // console.log(aText);
+        console.log(url);
+        console.log(aText);
         // urls.push(url);
         tempArr.push({url: url, aText: aText});
     }
@@ -244,8 +244,8 @@ let scrape = async (searchWord) => {
     const blockedResourceTypes = ['image','media','font','stylesheet'];
     // const browser = await puppeteer.launch({ headless: false });
     // const browser = await puppeteer.launch({ devtools: true });
-    // const browser = await puppeteer.launch();
-    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
+    const browser = await puppeteer.launch();
+    // const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
 
     // await page.setViewport({ width: 1920, height: 1080 });
@@ -357,7 +357,8 @@ app.post('/api', async function (req, res) {
         //     });
         //     res.status(200).send(rlist);
         // }else{
-            res.status(200).send(filterSingle(wordCountObj(rlist)));
+            // res.status(200).send(filterSingle(wordCountObj(rlist)));
+            res.status(200).send(wordCountObj(rlist));
         // }
     });
 })
@@ -591,23 +592,36 @@ let scrape5 = async (searchKey) => {
     await navigationPromise;
 
     await page.waitForSelector('a#hdtb-tls');
+
     await page.click('a#hdtb-tls');
-    await page.waitForSelector('[aria-label="All results"]');
-    await page.click('[aria-label="All results"]');
+    await navigationPromise;
+    // google updated their code no longer click on dropdown list by label
+    // await page.waitForSelector('[aria-label="All results"]');
+    // await page.click('[aria-label="All results"]');
+    // new way to select and click on dropdown list, by xpath
+    // select in chrome with $x("//div[contains(text(), 'All results')]")
+    const elements = await page.$x("//div[contains(text(), 'All results')]");
+    await elements[0].click();
     await page.waitForSelector('ul > li#li_1');
     await page.click('ul > li#li_1');
     await navigationPromise;
 
-    let counter = 0;
+    let pageNum = 0;
     let urls = [];
     let hasNext = true
     while(hasNext) {
-        console.log(counter);
-        counter++;
-        const searchResults = await page.$$('#rso > .g > .rc > .r > a');
+        console.log(pageNum);
+        pageNum++;
+        // google updated their code no longer select DOM like this
+        // const arrOfElements = await page.$$('#rso > .g > .rc > .r > a');
+        const arrOfElements = await page.$$('div.yuRUbf > a');
+        // const arrOfElements = await page.$$('#rso > .g > .rc .yuRUbf > a');
         // need to convert for loop to async function to wait
-        // urls.push(...await forLoop2(searchResults));     old
-        const arrObj = await forLoop2(searchResults);
+        // urls.push(...await forLoop(arrOfElements));  // old just array of url
+        // urls.push(...await (await forLoop(arrOfElements)).map(result=>result.url));  // ugly
+        const arrObj = await forLoop2(arrOfElements);
+        // const arrUrl = await arrObj.map(result=>result.url);
+        // await urls.push(...arrUrl);
         await urls.push(...arrObj);
         let nextLink = await page.$('a[id="pnnext"]');
         if (nextLink !== null) {
