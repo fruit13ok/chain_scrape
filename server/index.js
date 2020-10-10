@@ -567,8 +567,8 @@ app.post('/api4', async function (req, res) {
 // };
 let scrape5 = async (searchKey) => {
     const blockedResourceTypes = ['image','media','font','stylesheet'];
-    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox', '--blink-settings=imagesEnabled=false'], slowMo: 100});
-    // const browser = await puppeteer.launch({headless: false, slowMo: 100});
+    // const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox', '--blink-settings=imagesEnabled=false'], slowMo: 100});
+    const browser = await puppeteer.launch({headless: false, slowMo: 100});
     // const browser = await puppeteer.launch({slowMo: 100}); // need to slow down to content load
 
     const page = await browser.newPage();
@@ -626,13 +626,13 @@ let scrape5 = async (searchKey) => {
         // const arrUrl = await arrObj.map(result=>result.url);
         // await urls.push(...arrUrl);
         await urls.push(...arrObj);
-        let nextLink = await page.$('a[id="pnnext"]');
-        if (nextLink !== null) {
-            await nextLink.click();
-            await page.waitForNavigation();
-        } else {
+        // let nextLink = await page.$('a[id="pnnext"]');
+        // if (nextLink !== null) {
+        //     await nextLink.click();
+        //     await page.waitForNavigation();
+        // } else {
             hasNext = false;
-        }
+        // }
     }
     await browser.close();
     return urls;
