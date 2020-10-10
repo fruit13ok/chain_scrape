@@ -259,24 +259,27 @@ let scrape = async (searchWord) => {
     //     }
     // });
 
+    const navigationPromise =  page.waitForNavigation();
+
     await page.goto(`https://www.google.com/search?&q=${searchWord}`);
     // await page.waitForNavigation({ waitUntil: 'domcontentloaded' });
     // await page.waitFor(1000);
-    const result = await page.evaluate(() => {
-        let movieList = [];
-        let elements = document.querySelectorAll('.nVcaUb');
-        for (var element of elements){
-            let temp = element.childNodes[0].textContent;
-            if(temp != "undefined"){
-                movieList.push(temp);
+    await navigationPromise;
+    const results = await page.evaluate(() => {
+        let RETexts = [];
+        let ResultElements = document.querySelectorAll('.nVcaUb');
+        for (var ResultElement of ResultElements){
+            let REText = ResultElement.childNodes[0].textContent;
+            if(REText != "undefined"){
+                RETexts.push(REText);
             }
         }
-        return movieList;
+        return RETexts;
     });
     // await page.waitFor(1000);
     await page.close();
     await browser.close();
-    return result;
+    return results;
 };
 
 // ROUTES
