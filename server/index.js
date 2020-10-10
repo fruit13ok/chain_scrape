@@ -626,13 +626,13 @@ let scrape5 = async (searchKey) => {
         // const arrUrl = await arrObj.map(result=>result.url);
         // await urls.push(...arrUrl);
         await urls.push(...arrObj);
-        // let nextLink = await page.$('a[id="pnnext"]');
-        // if (nextLink !== null) {
-        //     await nextLink.click();
-        //     await page.waitForNavigation();
-        // } else {
+        let nextLink = await page.$('a[id="pnnext"]');
+        if (nextLink !== null) {
+            await nextLink.click();
+            await page.waitForNavigation();
+        } else {
             hasNext = false;
-        // }
+        }
     }
     await browser.close();
     return urls;
