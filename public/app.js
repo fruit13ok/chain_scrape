@@ -1,15 +1,14 @@
 console.log("Sanity Check: JS is working!");
-// let backendRoute = new URL("http://localhost:8000/api");
-// let backendRoute2 = new URL("http://localhost:8000/api2");
-// let backendRoute3 = new URL("http://localhost:8000/api3");
-// let backendRoute4 = new URL("http://localhost:8000/api4");
-// let backendRoute5 = new URL("http://localhost:8000/api5");
+// let domain = "localhost";
+// let domain = "138.68.234.14";    // scraping-research droplet (old)
+let domain = "165.232.52.237";   // scraperserver droplet (new)
+let port = 8000;
 
-let backendRoute = new URL("http://138.68.234.14:8000/api");
-let backendRoute2 = new URL("http://138.68.234.14:8000/api2");
-let backendRoute3 = new URL("http://138.68.234.14:8000/api3");
-let backendRoute4 = new URL("http://138.68.234.14:8000/api4");
-let backendRoute5 = new URL("http://138.68.234.14:8000/api5");
+let backendRoute = new URL("http://"+domain+":"+port+"/api");
+let backendRoute2 = new URL("http://"+domain+":"+port+"/api2");
+let backendRoute3 = new URL("http://"+domain+":"+port+"/api3");
+let backendRoute4 = new URL("http://"+domain+":"+port+"/api4");
+let backendRoute5 = new URL("http://"+domain+":"+port+"/api5");
 
 // this frontend scrape function do post request to backend scrape route,
 // pass in back end route and form object of search key and search depth
