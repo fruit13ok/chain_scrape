@@ -244,8 +244,8 @@ let scrape = async (searchWord) => {
     const blockedResourceTypes = ['image','media','font','stylesheet'];
     // const browser = await puppeteer.launch({ headless: false });
     // const browser = await puppeteer.launch({ devtools: true });
-    const browser = await puppeteer.launch();
-    // const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
+    // const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
 
     // await page.setViewport({ width: 1920, height: 1080 });
@@ -567,8 +567,8 @@ app.post('/api4', async function (req, res) {
 // };
 let scrape5 = async (searchKey) => {
     const blockedResourceTypes = ['image','media','font','stylesheet'];
-    // const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox', '--blink-settings=imagesEnabled=false'], slowMo: 100});
-    const browser = await puppeteer.launch({headless: false, slowMo: 100});
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox', '--blink-settings=imagesEnabled=false'], slowMo: 100});
+    // const browser = await puppeteer.launch({headless: false, slowMo: 100});
     // const browser = await puppeteer.launch({slowMo: 100}); // need to slow down to content load
 
     const page = await browser.newPage();
