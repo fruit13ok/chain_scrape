@@ -115,3 +115,5 @@ npm install user-agents --save
 
 //////////////////////////////////////////////////////
 backlinks, fix missing early result, not wait before loop
+
+// in wordCountObj() insert 2 properties to an array of objects, totalCount, and percentage

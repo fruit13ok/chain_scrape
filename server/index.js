@@ -163,18 +163,25 @@ let setNumOfSearchAppend = (searchDepth) => {
 // format the response object for frontend
 // return array of object with searchKey and count, base on final array of search result
 // sort by most count first
+// insert 2 properties to an array of objects, totalCount, and percentage
 let wordCountObj = (arrStrs) => {
+    let totalCount = 0;
     let arrObjs = [];
     let wordObj = {};
     arrStrs.forEach((word)=>{
         wordObj[word] ? wordObj[word]+=1 : wordObj[word]=1;
     });
     for (var pro in wordObj) {
+        totalCount += wordObj[pro];
         arrObjs.push({'searchKey': pro, 'count': wordObj[pro]});
     }
     arrObjs.sort((a,b)=>{
         // return (a.searchKey > b.searchKey ? 1 : -1);
         return (a.count < b.count ? 1 : -1);
+    });
+    arrObjs.forEach((obj)=>{
+        obj.percentage = (obj.count / totalCount * 100).toFixed(2);
+        obj.totalCount = totalCount;
     });
     return arrObjs;
 };
