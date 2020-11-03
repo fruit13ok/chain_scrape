@@ -117,3 +117,22 @@ npm install user-agents --save
 backlinks, fix missing early result, not wait before loop
 
 // in wordCountObj() insert 2 properties to an array of objects, totalCount, and percentage
+
+
+//////////////////////////////////////////////////////
+updated backlines to match small google codebase update
+added timeout error feedback as frontend response
+updated app.js frontend old jQuery code
+
+
+////////////////////////// added new scrape (single page app) ////////////////////////////
+see my repo: https://github.com/fruit13ok/gmap_places
+added google maps scrape (hard to scrape)
+scrape businesses data from google maps search results
+google maps is a isngle page app, dynamicaly generate content
+need to slow down the scrape process and not block any resouce type
+it scrapes about 5 seconds per 1 content result, easily take over 5 minutes
+
+
+/////////////////////////// fix this next time ///////////////////////////
+found that PDF, and CSV might be outdated
