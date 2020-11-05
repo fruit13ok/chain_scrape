@@ -29,7 +29,7 @@ npm run start-dev
 // changes for deploy to digital ocean
 // in app.js
     // let backendRoute = new URL("http://localhost:8000/api");
-    let backendRoute = new URL("http://138.68.234.14:8000/api");
+    let backendRoute = new URL("http://165.232.52.237:8000/api");
 // in index.js
     // const browser = await puppeteer.launch();
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
@@ -48,14 +48,14 @@ git push -u origin master
 
 // deploy to digital ocean
 login to droplet
-ssh root@138.68.234.14
+ssh root@165.232.52.237
 <password>
 git clone https://github.com/fruit13ok/chain_scrape.git
 cd chain_scrape
 npm install
 // test run (will end when logout droplet)
 node server
-go to http://138.68.234.14:8000/
+go to http://165.232.52.237:8000/
 click details, click visit this unsafe site
 // end server
 control-c
@@ -67,7 +67,7 @@ control-c
 pm2 start server/index.js
 // logout droplet
 exit
-go to http://138.68.234.14:8000/
+go to http://165.232.52.237:8000/
 // after change serverside code, either reload or restart server
 // have more uptime, at least keep one service running, restart services one by one
 pm2 reload server/index.js

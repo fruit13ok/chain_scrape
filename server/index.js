@@ -276,31 +276,42 @@ const loopClickCompResult = async (page, navigationPromise) => {
     // console.log('numOfCurResult: ', numOfCurResult);
 
     // need to reevaluate number of results, sometime will keep using firsttime result, I applied backup plan
+    page.waitForTimeout(1000);
     await page.waitForSelector('div.section-result-content');
     var numOfCurResult = Array.from(await page.$$('div.section-result-content')).length;
+    page.waitForTimeout(1000);
     console.log("# of results this page: ", numOfCurResult);
 
     // click to each result, scrape that result page, go back to previous page
     for(var i=0; i<numOfCurResult; i++){
+        page.waitForTimeout(1000);
         await page.waitForSelector('div.section-result-content'); 
+        page.waitForTimeout(1000);
         var arrOfElements = await page.$$('div.section-result-content');
+        page.waitForTimeout(1000);
         // when console log show i but not each content, it is ok,
         // that mean it didn't count the current page result size
         console.log(i);
         // my backup plan, check for undefined / null index
         if(Array.from(arrOfElements)[i]){
+            page.waitForTimeout(1000);
             await Array.from(arrOfElements)[i].click(); 
             await navigationPromise;
+            page.waitForTimeout(1000);
             await page.waitForSelector('.section-hero-header-image-hero-container.collapsible-hero-image img');
             // var imageUrl = await page.$eval('.section-hero-header-image-hero-container.collapsible-hero-image img', img => img.src);
+            page.waitForTimeout(1000);
             imageUrl = await page.evaluate((selector) => {
                 return document.querySelector(selector).getAttribute('src').replace('/', '')
             }, '.section-hero-header-image-hero-container.collapsible-hero-image img');
             await page.waitForSelector('.ugiz4pqJLAG__primary-text.gm2-body-2');
+            page.waitForTimeout(1000);
             company = await page.$eval('.section-hero-header-title-title', el => el.innerText);
+            page.waitForTimeout(1000);
             // array of string company data, array size will differ by differ company
             // I use regex to parse data
             divTexts = await page.$$eval('.ugiz4pqJLAG__primary-text.gm2-body-2', divs => divs.map(div => div.innerText));
+            page.waitForTimeout(1000);
             console.log(divTexts);
             matchAddress = divTexts.filter(word => word.match(regexMatchAddress))[0];
             if(matchAddress){
@@ -322,10 +333,13 @@ const loopClickCompResult = async (page, navigationPromise) => {
             curPageCompanies.push({company: company, imageUrl: imageUrl, address: address, city: city, state: state, zip: zip, phoneNumber: phoneNumber, website: website});
             // go back a page
             await page.waitForSelector('button.section-back-to-list-button'); 
+            page.waitForTimeout(1000);
             var backToResults = await page.$('button.section-back-to-list-button');
+            page.waitForTimeout(1000);
             await backToResults.click(); 
             // await page.goBack();     // don't use page.goBack(), instead select the back button and click it
             await navigationPromise;
+            page.waitForTimeout(1000);
         }
     }
     return curPageCompanies;
@@ -815,12 +829,16 @@ let scrape6 = async (searchKey) => {
     // https://www.checklyhq.com/docs/browser-checks/timeouts/
     var navigationPromise =  page.waitForNavigation();
 
-    await page.goto('https://www.google.com/maps/');
+    await page.setUserAgent(userAgent.random().toString());
+
+    await page.goto('https://www.google.com/maps/', { timeout: 25000, waitUntil: 'networkidle2', });
     await navigationPromise;
-    await page.type('input#searchboxinput', searchKey, { delay: 50 });
+    page.waitForTimeout(1000);
+    await page.type('input#searchboxinput', searchKey, { delay: 100 });
     // await page.type('input[title="Search"]', searchKey);
     await page.keyboard.press('Enter');
     await navigationPromise;
+    page.waitForTimeout(1000);
 
     
     // var address, city, stateZip, state, zip, phoneNumber, website;
@@ -848,11 +866,15 @@ let scrape6 = async (searchKey) => {
     while(hasNext) {
         // some how wait for div.section-result-content before and inside the loop makes less problem
         // await page.waitForSelector('div.section-result-content');
+        page.waitForTimeout(1000);
         temp = await loopClickCompResult(page,navigationPromise);
+        page.waitForTimeout(1000);
         urls = [...urls, ...temp];
         // need to check for disabled, because disabled element can still be click, can cause invite loop
         var nextBtnDisabled = await page.$('button#n7lv7yjyC35__section-pagination-button-next:disabled');
+        page.waitForTimeout(1000);
         var nextPageResults = await page.$('button#n7lv7yjyC35__section-pagination-button-next');
+        page.waitForTimeout(1000);
         if(nextBtnDisabled !== null){
             hasNext = false;
             console.log(hasNext);
@@ -860,6 +882,7 @@ let scrape6 = async (searchKey) => {
             console.log(hasNext);
             await nextPageResults.click(); 
             await navigationPromise;
+            page.waitForTimeout(1000);
         }
     }
 
