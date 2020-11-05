@@ -295,7 +295,7 @@ const loopClickCompResult = async (page, navigationPromise) => {
         // my backup plan, check for undefined / null index
         if(Array.from(arrOfElements)[i]){
             page.waitForTimeout(1000);
-            await Array.from(arrOfElements)[i].click(); 
+            await Array.from(arrOfElements)[i].click({delay: 1000}); 
             await navigationPromise;
             page.waitForTimeout(5000);
             await page.waitForSelector('.section-hero-header-image-hero-container.collapsible-hero-image img');
@@ -337,7 +337,7 @@ const loopClickCompResult = async (page, navigationPromise) => {
             page.waitForTimeout(1000);
             var backToResults = await page.$('button.section-back-to-list-button');
             page.waitForTimeout(1000);
-            await backToResults.click(); 
+            await backToResults.click({delay: 1000}); 
             // await page.goBack();     // don't use page.goBack(), instead select the back button and click it
             await navigationPromise;
             page.waitForTimeout(10000);
@@ -835,7 +835,7 @@ let scrape6 = async (searchKey) => {
     await page.goto('https://www.google.com/maps/', { timeout: 25000, waitUntil: 'networkidle2', });
     await navigationPromise;
     page.waitForTimeout(1000);
-    await page.type('input#searchboxinput', searchKey, { delay: 100 });
+    await page.type('input#searchboxinput', searchKey, { delay: 1000 });
     // await page.type('input[title="Search"]', searchKey);
     await page.keyboard.press('Enter');
     await navigationPromise;
@@ -881,7 +881,7 @@ let scrape6 = async (searchKey) => {
             console.log(hasNext);
         }else if(nextPageResults !== null){
             console.log(hasNext);
-            await nextPageResults.click(); 
+            await nextPageResults.click({delay: 1000}); 
             await navigationPromise;
             page.waitForTimeout(5000);
         }
