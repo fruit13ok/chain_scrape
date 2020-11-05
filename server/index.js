@@ -297,13 +297,14 @@ const loopClickCompResult = async (page, navigationPromise) => {
             page.waitForTimeout(1000);
             await Array.from(arrOfElements)[i].click(); 
             await navigationPromise;
-            page.waitForTimeout(1000);
+            page.waitForTimeout(5000);
             await page.waitForSelector('.section-hero-header-image-hero-container.collapsible-hero-image img');
             // var imageUrl = await page.$eval('.section-hero-header-image-hero-container.collapsible-hero-image img', img => img.src);
             page.waitForTimeout(1000);
             imageUrl = await page.evaluate((selector) => {
                 return document.querySelector(selector).getAttribute('src').replace('/', '')
             }, '.section-hero-header-image-hero-container.collapsible-hero-image img');
+            page.waitForTimeout(1000);
             await page.waitForSelector('.ugiz4pqJLAG__primary-text.gm2-body-2');
             page.waitForTimeout(1000);
             company = await page.$eval('.section-hero-header-title-title', el => el.innerText);
@@ -339,7 +340,7 @@ const loopClickCompResult = async (page, navigationPromise) => {
             await backToResults.click(); 
             // await page.goBack();     // don't use page.goBack(), instead select the back button and click it
             await navigationPromise;
-            page.waitForTimeout(1000);
+            page.waitForTimeout(10000);
         }
     }
     return curPageCompanies;
@@ -868,7 +869,7 @@ let scrape6 = async (searchKey) => {
         // await page.waitForSelector('div.section-result-content');
         page.waitForTimeout(1000);
         temp = await loopClickCompResult(page,navigationPromise);
-        page.waitForTimeout(1000);
+        page.waitForTimeout(5000);
         urls = [...urls, ...temp];
         // need to check for disabled, because disabled element can still be click, can cause invite loop
         var nextBtnDisabled = await page.$('button#n7lv7yjyC35__section-pagination-button-next:disabled');
@@ -882,7 +883,7 @@ let scrape6 = async (searchKey) => {
             console.log(hasNext);
             await nextPageResults.click(); 
             await navigationPromise;
-            page.waitForTimeout(1000);
+            page.waitForTimeout(5000);
         }
     }
 
