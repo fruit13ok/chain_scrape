@@ -814,9 +814,8 @@ app.post('/api5', async function (req, res) {
 
 let scrape6 = async (searchKey) => {
     // don't blocked resource types to improve speed, google maps needs most of them to work
-    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox'], slowMo: 100}); // need for real server, need image for map, so no '--blink-settings=imagesEnabled=false'
-    // var browser = await puppeteer.launch({headless: false, slowMo: 100});
-    // const browser = await puppeteer.launch({slowMo: 100}); // need to slow down to content load
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox'], ignoreHTTPSErrors: true , slowMo: 100}); // need for real server, need image for map, so no '--blink-settings=imagesEnabled=false'
+    // var browser = await puppeteer.launch({headless: false, ignoreHTTPSErrors: true, slowMo: 100});
 
     var page = await browser.newPage();
     // deal with navigation and page timeout, see the link
