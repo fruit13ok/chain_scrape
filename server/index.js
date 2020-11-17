@@ -305,30 +305,51 @@ const loopClickCompResult = async (page, navigationPromise) => {
                 let el = document.querySelector(selector);
                 return el ? el.getAttribute('src').replace('//', '') : "image error";
             }, '.section-hero-header-image-hero-container.collapsible-hero-image img');
-            await page.waitForSelector('.ugiz4pqJLAG__primary-text.gm2-body-2');
+            // await page.waitForSelector('.ugiz4pqJLAG__primary-text.gm2-body-2');
             await page.waitForTimeout(renInt(1000, 2000));
             company = await page.$eval('.section-hero-header-title-title', el => el.innerText);
             await page.waitForTimeout(renInt(1000, 2000));
             // array of string company data, array size will differ by differ company
             // I use regex to parse data
-            divTexts = await page.$$eval('.ugiz4pqJLAG__primary-text.gm2-body-2', divs => divs.map(div => div.innerText));
+            // divTexts = await page.$$eval('.ugiz4pqJLAG__primary-text.gm2-body-2', divs => divs.map(div => div.innerText));
+            divTexts = await page.evaluate((selector) => {
+                let els = Array.from(document.querySelectorAll(selector));
+                return els ? els.map(el => el.innerText) : "divTexts error";
+            }, '.ugiz4pqJLAG__primary-text.gm2-body-2');
             await page.waitForTimeout(renInt(1000, 2000));
             console.log(divTexts);
-            matchAddress = divTexts.filter(word => word.match(regexMatchAddress))[0];
-            if(matchAddress){
-                [address, city, stateZip] = matchAddress.split(', ');
-                [state, zip] = stateZip.split(' ');
+            if(divTexts != "divTexts error"){
+                matchAddress = divTexts.filter(word => word.match(regexMatchAddress))[0];
+                if(matchAddress){
+                    [address, city, stateZip] = matchAddress.split(', ');
+                    [state, zip] = stateZip.split(' ');
+                }
+                matchWebsites = divTexts.filter(word => word.match(regexDomainName));
+                // some content had multiple urls, last one looks better
+                matchWebsite = matchWebsites[matchWebsites.length - 1];
+                if(matchWebsite){
+                    website = matchWebsite;
+                }
+                matchPhoneNumber = divTexts.filter(word => word.match(regexPhoneNum))[0];
+                if(matchPhoneNumber){
+                    phoneNumber = matchPhoneNumber;
+                }
             }
-            matchWebsites = divTexts.filter(word => word.match(regexDomainName));
-            // some content had multiple urls, last one looks better
-            matchWebsite = matchWebsites[matchWebsites.length - 1];
-            if(matchWebsite){
-                website = matchWebsite;
-            }
-            matchPhoneNumber = divTexts.filter(word => word.match(regexPhoneNum))[0];
-            if(matchPhoneNumber){
-                phoneNumber = matchPhoneNumber;
-            }
+            // matchAddress = divTexts.filter(word => word.match(regexMatchAddress))[0];
+            // if(matchAddress){
+            //     [address, city, stateZip] = matchAddress.split(', ');
+            //     [state, zip] = stateZip.split(' ');
+            // }
+            // matchWebsites = divTexts.filter(word => word.match(regexDomainName));
+            // // some content had multiple urls, last one looks better
+            // matchWebsite = matchWebsites[matchWebsites.length - 1];
+            // if(matchWebsite){
+            //     website = matchWebsite;
+            // }
+            // matchPhoneNumber = divTexts.filter(word => word.match(regexPhoneNum))[0];
+            // if(matchPhoneNumber){
+            //     phoneNumber = matchPhoneNumber;
+            // }
             // console.log(imageUrl+'\n'+address+'\n'+city+'\n'+state+'\n'+zip+'\n'+phoneNumber+'\n'+website);
             // company data formet
             curPageCompanies.push({company: company, imageUrl: imageUrl, address: address, city: city, state: state, zip: zip, phoneNumber: phoneNumber, website: website});
