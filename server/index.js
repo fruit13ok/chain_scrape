@@ -298,10 +298,12 @@ const loopClickCompResult = async (page, navigationPromise) => {
             await Array.from(arrOfElements)[i].click(); 
             await navigationPromise;
             await page.waitForTimeout(renInt(1000, 2000));
-            await page.waitForSelector('.section-hero-header-image-hero-container.collapsible-hero-image img');
+            // await page.waitForSelector('.section-hero-header-image-hero-container.collapsible-hero-image img');
             // var imageUrl = await page.$eval('.section-hero-header-image-hero-container.collapsible-hero-image img', img => img.src);
             imageUrl = await page.evaluate((selector) => {
-                return document.querySelector(selector).getAttribute('src').replace('/', '')
+                // return document.querySelector(selector).getAttribute('src').replace('//', '');
+                let el = document.querySelector(selector);
+                return el ? el.getAttribute('src').replace('//', '') : "image error";
             }, '.section-hero-header-image-hero-container.collapsible-hero-image img');
             await page.waitForSelector('.ugiz4pqJLAG__primary-text.gm2-body-2');
             await page.waitForTimeout(renInt(1000, 2000));
