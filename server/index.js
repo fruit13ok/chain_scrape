@@ -307,7 +307,11 @@ const loopClickCompResult = async (page, navigationPromise) => {
             }, '.section-hero-header-image-hero-container.collapsible-hero-image img');
             // await page.waitForSelector('.ugiz4pqJLAG__primary-text.gm2-body-2');
             await page.waitForTimeout(renInt(1000, 2000));
-            company = await page.$eval('.section-hero-header-title-title', el => el.innerText);
+            // company = await page.$eval('.section-hero-header-title-title', el => el.innerText);
+            company = await page.evaluate((selector) => {
+                let el = document.querySelectorAll(selector);
+                return el ? el.innerText : "company error";
+            }, '.section-hero-header-title-title');
             await page.waitForTimeout(renInt(1000, 2000));
             // array of string company data, array size will differ by differ company
             // I use regex to parse data
