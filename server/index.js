@@ -358,13 +358,19 @@ const loopClickCompResult = async (page, navigationPromise) => {
             // company data formet
             curPageCompanies.push({company: company, imageUrl: imageUrl, address: address, city: city, state: state, zip: zip, phoneNumber: phoneNumber, website: website});
             // go back a page
-            await page.waitForSelector('button.section-back-to-list-button'); 
+            // await page.waitForSelector('button.section-back-to-list-button'); 
+            await page.waitForTimeout(renInt(1000, 2000));
             var backToResults = await page.$('button.section-back-to-list-button');
             await page.waitForTimeout(renInt(1000, 2000));
-            await backToResults.click(); 
+            if(backToResults !== null){
+                await backToResults.click();
+                await navigationPromise;
+                await page.waitForTimeout(renInt(1000, 2000));
+            }
+            // await backToResults.click(); 
             // await page.goBack();     // don't use page.goBack(), instead select the back button and click it
-            await navigationPromise;
-            await page.waitForTimeout(renInt(1000, 2000));
+            // await navigationPromise;
+            // await page.waitForTimeout(renInt(1000, 2000));
         }
     }
     return curPageCompanies;
