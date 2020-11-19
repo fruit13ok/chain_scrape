@@ -280,14 +280,17 @@ const loopClickCompResult = async (page, navigationPromise) => {
     // console.log('numOfCurResult: ', numOfCurResult);
 
     // need to reevaluate number of results, sometime will keep using firsttime result, I applied backup plan
-    await page.waitForSelector('div.section-result-content');
+    // await page.waitForSelector('div.section-result-content');
+    await page.waitForTimeout(renInt(1000, 2000));
+    console.log("testing in loopClickCompResult() before get numOfCurResult");
     var numOfCurResult = Array.from(await page.$$('div.section-result-content')).length;
     await page.waitForTimeout(renInt(1000, 2000));
     console.log("# of results this page: ", numOfCurResult);
 
     // click to each result, scrape that result page, go back to previous page
     for(var i=0; i<numOfCurResult; i++){
-        await page.waitForSelector('div.section-result-content'); 
+        // await page.waitForSelector('div.section-result-content'); 
+        await page.waitForTimeout(renInt(1000, 2000));
         var arrOfElements = await page.$$('div.section-result-content');
         await page.waitForTimeout(renInt(1000, 2000));
         // when console log show i but not each content, it is ok,
@@ -295,9 +298,10 @@ const loopClickCompResult = async (page, navigationPromise) => {
         console.log(i);
         // my backup plan, check for undefined / null index
         if(Array.from(arrOfElements)[i]){
+            await Array.from(arrOfElements)[i].hover(); 
             await Array.from(arrOfElements)[i].click(); 
             await navigationPromise;
-            await page.waitForTimeout(renInt(1000, 2000));
+            await page.waitForTimeout(renInt(2000, 3000));
             // await page.waitForSelector('.section-hero-header-image-hero-container.collapsible-hero-image img');
             // var imageUrl = await page.$eval('.section-hero-header-image-hero-container.collapsible-hero-image img', img => img.src);
             imageUrl = await page.evaluate((selector) => {
@@ -363,6 +367,7 @@ const loopClickCompResult = async (page, navigationPromise) => {
             var backToResults = await page.$('button.section-back-to-list-button');
             await page.waitForTimeout(renInt(1000, 2000));
             if(backToResults !== null){
+                await backToResults.hover();
                 await backToResults.click();
                 await navigationPromise;
                 await page.waitForTimeout(renInt(1000, 2000));
@@ -910,6 +915,7 @@ let scrape6 = async (searchKey) => {
         }else if(nextPageResults !== null){
             await page.waitForTimeout(renInt(5000, 6000));
             console.log(hasNext);
+            await nextPageResults.hover(); 
             await nextPageResults.click(); 
             await navigationPromise;
             await page.waitForTimeout(renInt(1000, 2000));
