@@ -246,18 +246,26 @@ const loopClickCompResult = async (page, navigationPromise) => {
     var matchPhoneNumber = '';
     var matchWebsites = [];
     var matchWebsite = '';
-    var imageUrl = '';
-    var company = '';
+    var logo = '';
+    var category = '';
+    var name = '';
+    var shareBtn = null;
+    var mapID = '';
+    var closeBtn = null;
     var divTexts = '';
     var address = '';
     var city = '';
     var stateZip = '';
     var state = '';
     var zip = '';
-    var phoneNumber = '';
+    var phonenumber = '';
     var website = '';
+    var dropdownListBtn = null;
+    var businesshours = [];
+    var tmpBHours = [];
+    var companyJson = {};
     // regular expression for full address
-    const regexMatchAddress = /\d+ \d*\w+ \w+.*, \w+, \w+ \d+/g;
+    const regexAddress = /\d+ \d*\w+ \w+.*, \w+, \w+ \d+/g;
     // regular expression for domain name
     const regexDomainName = /(https?:\/\/)?(www\.)?([\w\d]+)\.([\w]+)(\.[\w]+)?(\/[^ ]*)?/g;
     // regular expression for phone number
@@ -280,57 +288,83 @@ const loopClickCompResult = async (page, navigationPromise) => {
     // console.log('numOfCurResult: ', numOfCurResult);
 
     // need to reevaluate number of results, sometime will keep using firsttime result, I applied backup plan
-    // await page.waitForSelector('div.section-result-content');
-    await page.waitForTimeout(renInt(1000, 2000));
-    console.log("testing in loopClickCompResult() before get numOfCurResult");
+    await page.waitForSelector('div.section-result-content');
     var numOfCurResult = Array.from(await page.$$('div.section-result-content')).length;
-    await page.waitForTimeout(renInt(1000, 2000));
+    await page.waitForTimeout(renInt(500, 600));
     console.log("# of results this page: ", numOfCurResult);
 
     // click to each result, scrape that result page, go back to previous page
     for(var i=0; i<numOfCurResult; i++){
-        // await page.waitForSelector('div.section-result-content'); 
-        await page.waitForTimeout(renInt(1000, 2000));
+        await page.waitForSelector('div.section-result-content'); 
         var arrOfElements = await page.$$('div.section-result-content');
-        await page.waitForTimeout(renInt(1000, 2000));
+        await page.waitForTimeout(renInt(500, 600));
         // when console log show i but not each content, it is ok,
         // that mean it didn't count the current page result size
         console.log(i);
         // my backup plan, check for undefined / null index
         if(Array.from(arrOfElements)[i]){
-            await Array.from(arrOfElements)[i].hover(); 
             await Array.from(arrOfElements)[i].click(); 
             await navigationPromise;
-            await page.waitForTimeout(renInt(2000, 3000));
-            // await page.waitForSelector('.section-hero-header-image-hero-container.collapsible-hero-image img');
-            // var imageUrl = await page.$eval('.section-hero-header-image-hero-container.collapsible-hero-image img', img => img.src);
-            imageUrl = await page.evaluate((selector) => {
-                // return document.querySelector(selector).getAttribute('src').replace('//', '');
+            await page.waitForTimeout(renInt(500, 600));
+
+            await page.waitForSelector('.section-hero-header-image-hero-container.collapsible-hero-image img');
+            logo = await page.evaluate((selector) => {
                 let el = document.querySelector(selector);
                 return el ? el.getAttribute('src').replace('//', '') : "image error";
             }, '.section-hero-header-image-hero-container.collapsible-hero-image img');
-            // await page.waitForSelector('.ugiz4pqJLAG__primary-text.gm2-body-2');
-            await page.waitForTimeout(renInt(1000, 2000));
-            // company = await page.$eval('.section-hero-header-title-title', el => el.innerText);
-            company = await page.evaluate((selector) => {
-                let el = document.querySelectorAll(selector);
-                return el ? el.innerText : "company error";
+            await page.waitForTimeout(renInt(500, 600));
+
+            await page.waitForSelector('div.section-hero-header-title-description');
+            category = await page.evaluate((selector) => {
+                let el = document.querySelector(selector);
+                return el ? el.innerText.split(/\r?\n/).pop() : "category error";
+            }, 'div.section-hero-header-title-description');
+            await page.waitForTimeout(renInt(500, 600));
+
+            await page.waitForSelector('.section-hero-header-title-title');
+            name = await page.evaluate((selector) => {
+                let el = document.querySelector(selector);
+                return el ? el.innerText : "name error";
             }, '.section-hero-header-title-title');
-            await page.waitForTimeout(renInt(1000, 2000));
+            await page.waitForTimeout(renInt(500, 600));
+
+            await page.waitForSelector('button[aria-label="Share"]');
+            shareBtn = await page.$('button[aria-label="Share"]');
+            await page.waitForTimeout(renInt(500, 600));
+            if(shareBtn){
+                await shareBtn.click();
+                await navigationPromise;
+                await page.waitForTimeout(renInt(2000, 3000));
+            }
+            await page.waitForSelector('input.section-copy-link-input');
+            mapID = await page.evaluate((selector) => {
+                let el = document.querySelector(selector);
+                return el ? el.value : "no mapID error";
+            }, 'input.section-copy-link-input');
+            await page.waitForTimeout(renInt(500, 600));
+            await page.waitForSelector('button[aria-label="Close"]');
+            closeBtn = await page.$('button[aria-label="Close"]');
+            await page.waitForTimeout(renInt(500, 600));
+            if(closeBtn){
+                await closeBtn.click();
+                await navigationPromise;
+                await page.waitForTimeout(renInt(2000, 3000));
+            }
+
             // array of string company data, array size will differ by differ company
             // I use regex to parse data
-            // divTexts = await page.$$eval('.ugiz4pqJLAG__primary-text.gm2-body-2', divs => divs.map(div => div.innerText));
+            await page.waitForSelector('.ugiz4pqJLAG__primary-text.gm2-body-2');
+            
             divTexts = await page.evaluate((selector) => {
                 let els = Array.from(document.querySelectorAll(selector));
                 return els ? els.map(el => el.innerText) : "divTexts error";
             }, '.ugiz4pqJLAG__primary-text.gm2-body-2');
-            await page.waitForTimeout(renInt(1000, 2000));
-            console.log(divTexts);
+            await page.waitForTimeout(renInt(500, 600));
             if(divTexts != "divTexts error"){
-                matchAddress = divTexts.filter(word => word.match(regexMatchAddress))[0];
+                console.log(divTexts);
+                matchAddress = divTexts.filter(word => word.match(regexAddress))[0];
                 if(matchAddress){
-                    [address, city, stateZip] = matchAddress.split(', ');
-                    [state, zip] = stateZip.split(' ');
+                    address = matchAddress;
                 }
                 matchWebsites = divTexts.filter(word => word.match(regexDomainName));
                 // some content had multiple urls, last one looks better
@@ -340,37 +374,70 @@ const loopClickCompResult = async (page, navigationPromise) => {
                 }
                 matchPhoneNumber = divTexts.filter(word => word.match(regexPhoneNum))[0];
                 if(matchPhoneNumber){
-                    phoneNumber = matchPhoneNumber;
+                    phonenumber = matchPhoneNumber;
                 }
             }
-            // matchAddress = divTexts.filter(word => word.match(regexMatchAddress))[0];
-            // if(matchAddress){
-            //     [address, city, stateZip] = matchAddress.split(', ');
-            //     [state, zip] = stateZip.split(' ');
-            // }
-            // matchWebsites = divTexts.filter(word => word.match(regexDomainName));
-            // // some content had multiple urls, last one looks better
-            // matchWebsite = matchWebsites[matchWebsites.length - 1];
-            // if(matchWebsite){
-            //     website = matchWebsite;
-            // }
-            // matchPhoneNumber = divTexts.filter(word => word.match(regexPhoneNum))[0];
-            // if(matchPhoneNumber){
-            //     phoneNumber = matchPhoneNumber;
-            // }
-            // console.log(imageUrl+'\n'+address+'\n'+city+'\n'+state+'\n'+zip+'\n'+phoneNumber+'\n'+website);
+            await page.waitForTimeout(renInt(500, 600));
+            
+            // document.querySelector('.section-open-hours-button').click();
+            // document.querySelector('.section-open-hours-container').innerText;
+            try {
+                await page.waitForSelector('.section-open-hours-button', { timeout: 10000 }); // default 30000
+                dropdownListBtn = await page.$('.section-open-hours-button');
+                await page.waitForTimeout(renInt(500, 600));
+                if(dropdownListBtn){
+                    await dropdownListBtn.click();
+                    await navigationPromise;
+                    await page.waitForTimeout(renInt(2000, 3000));
+                }
+                await page.waitForSelector('.section-open-hours-container');
+                tmpBHours = await page.evaluate((selector) => {
+                    let el = document.querySelector(selector);
+                    return el ? el.innerText : "no businesshours error";
+                }, '.section-open-hours-container');
+                await page.waitForTimeout(renInt(500, 600));
+                if(tmpBHours != "businesshours error"){
+                    var hoursArr = tmpBHours.replace(/\s/g, ' ').split(' ').filter(e=>e!="");
+                    var curDay = {};
+                    var days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+                    for (let i=0; i<hoursArr.length; i++){
+                        if(days.includes(hoursArr[i])){
+                            if(i!=0){
+                                businesshours.push(curDay);
+                                curDay = {};
+                            }
+                            curDay.day = hoursArr[i];
+                            curDay.hours = "";
+                        }else{
+                            curDay.hours += hoursArr[i]+" ";
+                        }
+                        if(i==hoursArr.length-1){
+                            businesshours.push(curDay);
+                            curDay = {};
+                        }
+                    }
+                    const sorter = {"Monday": 1,"Tuesday": 2,"Wednesday": 3,"Thursday": 4,"Friday": 5,"Saturday": 6,"Sunday": 0};
+                    businesshours.sort((a, b)=> sorter[a.day]-sorter[b.day]);
+                    console.log(businesshours);
+                }
+            } catch(error) {
+                console.log("Error, no business hour");
+            }
+
             // company data formet
-            curPageCompanies.push({company: company, imageUrl: imageUrl, address: address, city: city, state: state, zip: zip, phoneNumber: phoneNumber, website: website});
+            companyJson = {name: name, category: category, address: address, phonenumber: phonenumber, website: website, logo: logo, mapID: mapID, businesshours: businesshours};
+            curPageCompanies.push(companyJson);
+            businesshours = [];
+
             // go back a page
             // await page.waitForSelector('button.section-back-to-list-button'); 
-            await page.waitForTimeout(renInt(1000, 2000));
+            await page.waitForTimeout(renInt(500, 600));
             var backToResults = await page.$('button.section-back-to-list-button');
-            await page.waitForTimeout(renInt(1000, 2000));
+            await page.waitForTimeout(renInt(500, 600));
             if(backToResults !== null){
-                await backToResults.hover();
                 await backToResults.click();
                 await navigationPromise;
-                await page.waitForTimeout(renInt(1000, 2000));
+                await page.waitForTimeout(renInt(2000, 3000));
             }
             // await backToResults.click(); 
             // await page.goBack();     // don't use page.goBack(), instead select the back button and click it
@@ -893,7 +960,7 @@ let scrape6 = async (searchKey) => {
     // one solution is to evaluate the same selector every time the page navigate.
 
 
-
+    /*
     // after search, scraped current page results, go to next page of results
     var temp = [];
     let urls = [];
@@ -915,13 +982,23 @@ let scrape6 = async (searchKey) => {
         }else if(nextPageResults !== null){
             await page.waitForTimeout(renInt(5000, 6000));
             console.log(hasNext);
-            await nextPageResults.hover(); 
             await nextPageResults.click(); 
             await navigationPromise;
             await page.waitForTimeout(renInt(1000, 2000));
         }
     }
-
+    */
+    // after search, scraped current page results, go to next page of results
+    // a work around, search smarter by append "near zip code" after search key,
+    // also only search first page
+    var temp = [];
+    let urls = [];
+    // some how wait for div.section-result-content before and inside the loop makes less problem
+    // await page.waitForSelector('div.section-result-content');
+    temp = await loopClickCompResult(page,navigationPromise);
+    await page.waitForTimeout(renInt(500, 600));
+    urls = [...urls, ...temp];
+    // need to check for disabled, because disabled element can still be click, can cause invite loop
 
 
     ////////////////////////// another list of results on current page ////////////////////////////
@@ -934,6 +1011,7 @@ let scrape6 = async (searchKey) => {
     // // array of current page results
     // elements[0].querySelectorAll('.sJKr7qpXOXd__result-container.sJKr7qpXOXd__two-actions.sJKr7qpXOXd__wide-margin');
 
+    console.log("done scraping");
     await browser.close();
     return urls;
 };
@@ -942,7 +1020,8 @@ app.post('/api6', async function (req, res) {
     let searchKey = req.body.targetPage3 || "";
     try{
         const companies = await scrape6(searchKey);
-        res.status(200).send(removeDuplicateResult2(companies));
+        // res.status(200).send(removeDuplicateResult2(companies));
+        res.status(200).send(companies);
     }catch(err){
         console.error(err)
         res.status(200).send({error: 'TimeoutError', solution: 'refresh, try again'});
