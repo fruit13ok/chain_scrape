@@ -382,7 +382,7 @@ const loopClickCompResult = async (page, navigationPromise) => {
             // document.querySelector('.section-open-hours-button').click();
             // document.querySelector('.section-open-hours-container').innerText;
             try {
-                await page.waitForSelector('.section-open-hours-button', { timeout: 10000 }); // default 30000
+                await page.waitForSelector('.section-open-hours-button', { timeout: 5000 }); // default 30000
                 dropdownListBtn = await page.$('.section-open-hours-button');
                 await page.waitForTimeout(renInt(500, 600));
                 if(dropdownListBtn){
@@ -437,7 +437,7 @@ const loopClickCompResult = async (page, navigationPromise) => {
             if(backToResults !== null){
                 await backToResults.click();
                 await navigationPromise;
-                await page.waitForTimeout(renInt(2000, 3000));
+                await page.waitForTimeout(renInt(1000, 2000));
             }
             // await backToResults.click(); 
             // await page.goBack();     // don't use page.goBack(), instead select the back button and click it
@@ -473,9 +473,7 @@ let removeDuplicateResult2 = (allResult) => {
 // the puppeteer filter doesn't work
 let scrape = async (searchWord) => {
     const blockedResourceTypes = ['image','media','font','stylesheet'];
-    // const browser = await puppeteer.launch({ headless: false });
-    // const browser = await puppeteer.launch({ devtools: true });
-    // const browser = await puppeteer.launch();
+    // const browser = await puppeteer.launch({ headless: false, devtools: true });
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
 

@@ -93,6 +93,34 @@ const generateDownloadButtons = (htmlElement) => {
     htmlElement.appendChild(buttonCSV);
 };
 
+// add dropdown list to filter the JSON result by count
+const generateDropdown = (htmlElement) => {
+    let span = document.createElement('span');
+    span.innerHTML = ' ';
+    let label = document.createElement("label");
+    label.setAttribute("for", "mySelect");
+    label.innerHTML = 'filter by count: ';
+    let select = document.createElement("select");
+    select.setAttribute("id", "mySelect");
+    for (let i = 0; i <= 3; i++) {
+        let option = document.createElement("option");
+        option.setAttribute("value", i);
+        option.text = i;
+        select.appendChild(option);
+    }
+    htmlElement.appendChild(span);
+    htmlElement.appendChild(label);
+    htmlElement.appendChild(select);
+};
+
+// filter number of count or below
+let filterByCount = (unFilArrObjs, countBy) => {
+    let filtered = unFilArrObjs.filter((obj)=>{
+        return (obj.count > countBy)
+    });
+    return filtered;
+};
+
 const getScrape = async (backendRoute, formObj) => {
     let jResult = [];
     try {
@@ -120,10 +148,14 @@ const getScrape = async (backendRoute, formObj) => {
         // add downloadable buttons PDF CSV
         // I change display from list to JSON, see version before 7-3-2020
         generateDownloadButtons(mList);
+        // add dropdown list to filter JSON result by count
+        generateDropdown(mList);
         let pre = document.createElement('pre');
-        pre.innerHTML = JSON.stringify(json, null, 4);
+        pre.id = "pre";
+        // filter JSON result by count
+        jResult = filterByCount(json,0);
+        pre.innerHTML = JSON.stringify(jResult, null, 4);
         mList.appendChild(pre);
-        jResult = json;
 	    elapsedMinutes = minutes;
 	    elapsedSeconds = seconds;
 	    document.getElementById('elapsed-time').innerHTML =  '<p><b>Response Time: </b>' + elapsedMinutes + ' minutes and ' + elapsedSeconds + ' seconds</p>';
@@ -387,5 +419,11 @@ $(function(){
     // onclick convert JSON to CSV and download it
     $("#result-list").on("click", "#btncsv", function(){
         convertAndDownloadCSV(jsonResult);
+    });
+
+    // onclick dropdown list filter JSON result by count 
+    $("#result-list").on("change", "#mySelect", function(){
+        let pre = document.getElementById('pre');
+        pre.innerHTML = JSON.stringify(filterByCount(jsonResult, $(this).val()), null, 4);
     });
 });
