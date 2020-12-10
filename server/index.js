@@ -3,6 +3,7 @@
 // native
 const path = require('path');
 const https = require('https');
+const Sitemapper = require('sitemapper');
 
 // 3rd party
 const express = require('express');
@@ -13,6 +14,7 @@ const fetch = require("node-fetch");
 const AbortController = require('abort-controller');
 // random user info for frequent request / recaptcha
 var userAgent = require('user-agents');
+const sitemap = new Sitemapper();
 
 // local
 const app = express();
@@ -50,6 +52,7 @@ app.listen(port, () => {
 });
 
 // helper functions
+
 
 function renInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
@@ -711,34 +714,50 @@ app.post('/api3', async function (req, res) {
 // scrape for all "a" tag's "href" content of given page
 // standard the page
 let scrape4 = async (targetPage) => {
-    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox', '--blink-settings=imagesEnabled=false']});
-    const page = await browser.newPage();
-    if(targetPage.startsWith('https://www.')){
-        console.log('https://www.');
-    }else if(targetPage.startsWith('http://www.')){
-        console.log('http://www.');
-        targetPage='https://www.'+targetPage.slice(11);
-    }else if(targetPage.startsWith('www.')){
-        console.log('www.');
-        targetPage='https://'+targetPage;
-    }else{
-        targetPage='https://www.'+targetPage;
+    let hrefs = [];
+    // other than normal html page, it can scrape xml sitemap page
+    if(targetPage.endsWith('.xml')){
+        await sitemap.fetch(targetPage)
+        // let getUrls = sitemap.fetch(targetPage)
+        .then(sites=>{
+            hrefs=sites.sites;
+        });
+        // let logUrls = async ()=>{
+        //     await getUrls;
+        //     console.log(hrefs);
+        // }
+        // logUrls();
     }
-    // await page.goto(targetPage);
-    await page.goto(targetPage, {
-        waitUntil: 'networkidle2',
-        timeout: 30000
-    });
+    else{
+        const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox', '--blink-settings=imagesEnabled=false']});
+        const page = await browser.newPage();
+        if(targetPage.startsWith('https://www.')){
+            console.log('https://www.');
+        }else if(targetPage.startsWith('http://www.')){
+            console.log('http://www.');
+            targetPage='https://www.'+targetPage.slice(11);
+        }else if(targetPage.startsWith('www.')){
+            console.log('www.');
+            targetPage='https://'+targetPage;
+        }else{
+            targetPage='https://www.'+targetPage;
+        }
+        // await page.goto(targetPage);
+        await page.goto(targetPage, {
+            waitUntil: 'networkidle2',
+            timeout: 30000
+        });
 
-    //either of these 3 ways return all links
-    const hrefs = await page.$$eval('a', as => as.map(a => a.href));
-    // const hrefs = await page.evaluate(() => {
-    //     return Array.from(document.getElementsByTagName('a'), a => a.href);
-    // });
-    // const hrefs = await Promise.all((await page.$$('a')).map(async a => {
-    //     return await (await a.getProperty('href')).jsonValue();
-    // }));
-    console.log('hrefs: ',hrefs.length, hrefs);
+        //either of these 3 ways return all links
+        hrefs = await page.$$eval('a', as => as.map(a => a.href));
+        // const hrefs = await page.evaluate(() => {
+        //     return Array.from(document.getElementsByTagName('a'), a => a.href);
+        // });
+        // const hrefs = await Promise.all((await page.$$('a')).map(async a => {
+        //     return await (await a.getProperty('href')).jsonValue();
+        // }));
+        console.log('hrefs: ',hrefs.length, hrefs);
+    }
     return hrefs;
 };
 
@@ -791,6 +810,7 @@ app.post('/api4', async function (req, res) {
 //         return aList;
 //     });
 //     // close when is done
+//     await page.close();
 //     await browser.close();
 //     return result;
 // };
@@ -863,6 +883,7 @@ let scrape5 = async (searchKey) => {
             hasNext = false;
         }
     }
+    await page.close();
     await browser.close();
     return urls;
 };
@@ -1010,6 +1031,7 @@ let scrape6 = async (searchKey) => {
     // elements[0].querySelectorAll('.sJKr7qpXOXd__result-container.sJKr7qpXOXd__two-actions.sJKr7qpXOXd__wide-margin');
 
     console.log("done scraping");
+    await page.close();
     await browser.close();
     return urls;
 };
