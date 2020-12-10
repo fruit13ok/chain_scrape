@@ -145,3 +145,7 @@ found that PDF, and CSV might be outdated
 
 ////////////////////////////////////////////////////////
 on part 1, added frontend only filter, result can be filter by count
+
+
+//////////////////////////////////////////////////////////////
+part 4 add scrape xml sitemap page
