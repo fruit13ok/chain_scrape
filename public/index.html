@@ -42,7 +42,7 @@
         <h5>Part 2: Search words in a page.</h5>
         <form id='form2' action="/">
             Target page: 
-            <input type="text" name="targetPage" value="starbucks.com" style="width:20%;">
+            <input type="text" name="targetPage0" value="starbucks.com" style="width:20%;">
             <br>
             Search keys: 
             <input type="text" name="searchKeys" value="menu,rewards,gift cards,find a store" style="width:40%;">
@@ -66,10 +66,10 @@
         <button id='button3' class="btn btn-primary mt-3 mb-3">Submit</button>
         <hr>
 
-        <h5>Part 4: Get all links and their status from given page or XML sitemap page</h5>
+        <h5>Part 4: Get all links and their status from given page</h5>
         <form id='form4' action="/">
             Target page: 
-            <input type="text" name="targetPage" value="google.com" style="width:20%;">
+            <input type="text" name="targetPage1" value="google.com" style="width:20%;">
         </form>
         <button id='button4' class="btn btn-primary mt-3 mb-3">Submit</button>
         <hr>
@@ -78,9 +78,11 @@
         <form id='form5' action="/">
             Search exact term (Verbatim) from google.com:
             <br>
+            This automated scrape takes about 12 seconds per 1 page of data, most search results are more than 10 pages.
+            <br>
             &#9888; Frequent search will cause '408 Request Timeout' on good links &#9888;
             <br>
-            <input type="text" name="targetPage2" value="homemade souffle pancake" style="width:20%;">
+            <input type="text" name="targetPage2" value="starwars.com" style="width:20%;">
         </form>
         <button id='button5' class="btn btn-primary mt-3 mb-3">Search</button>
         <hr>
@@ -94,6 +96,14 @@
             <input type="text" name="targetPage3" value="marketing firm Seattle 98108" style="width:20%;">
         </form>
         <button id='button6' class="btn btn-primary mt-3 mb-3">Search</button>
+        <hr>
+
+        <h5>Part 7: Get all links and their status from given XML sitemap page</h5>
+        <form id='form7' action="/">
+            Target page: 
+            <input type="text" name="targetPage4" value="https://symphysismarketing.com/page-sitemap.xml" style="width:20%;">
+        </form>
+        <button id='button7' class="btn btn-primary mt-3 mb-3">Submit</button>
         <hr>
 
     </div>

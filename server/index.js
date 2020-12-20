@@ -3,7 +3,6 @@
 // native
 const path = require('path');
 const https = require('https');
-const Sitemapper = require('sitemapper');
 
 // 3rd party
 const express = require('express');
@@ -14,6 +13,7 @@ const fetch = require("node-fetch");
 const AbortController = require('abort-controller');
 // random user info for frequent request / recaptcha
 var userAgent = require('user-agents');
+const Sitemapper = require('sitemapper');
 const sitemap = new Sitemapper();
 
 // local
@@ -644,7 +644,7 @@ let scrape2 = async (targetPage, searchKeys) => {
 app.post('/api2', async function (req, res) {
     // req.setTimeout(500000);
     req.setTimeout(0);
-    let targetPage = req.body.targetPage;
+    let targetPage = req.body.targetPage0;
     let searchKeys = req.body.searchKeys;
     console.log(searchKeys);
     searchKeys = searchKeys.split(",");
@@ -715,55 +715,40 @@ app.post('/api3', async function (req, res) {
 // standard the page
 let scrape4 = async (targetPage) => {
     let hrefs = [];
-    // other than normal html page, it can scrape xml sitemap page
-    if(targetPage.endsWith('.xml')){
-        await sitemap.fetch(targetPage)
-        // let getUrls = sitemap.fetch(targetPage)
-        .then(sites=>{
-            hrefs=sites.sites;
-        });
-        // let logUrls = async ()=>{
-        //     await getUrls;
-        //     console.log(hrefs);
-        // }
-        // logUrls();
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox', '--blink-settings=imagesEnabled=false']});
+    const page = await browser.newPage();
+    if(targetPage.startsWith('https://www.')){
+        console.log('https://www.');
+    }else if(targetPage.startsWith('http://www.')){
+        console.log('http://www.');
+        targetPage='https://www.'+targetPage.slice(11);
+    }else if(targetPage.startsWith('www.')){
+        console.log('www.');
+        targetPage='https://'+targetPage;
+    }else{
+        targetPage='https://www.'+targetPage;
     }
-    else{
-        const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox', '--blink-settings=imagesEnabled=false']});
-        const page = await browser.newPage();
-        if(targetPage.startsWith('https://www.')){
-            console.log('https://www.');
-        }else if(targetPage.startsWith('http://www.')){
-            console.log('http://www.');
-            targetPage='https://www.'+targetPage.slice(11);
-        }else if(targetPage.startsWith('www.')){
-            console.log('www.');
-            targetPage='https://'+targetPage;
-        }else{
-            targetPage='https://www.'+targetPage;
-        }
-        // await page.goto(targetPage);
-        await page.goto(targetPage, {
-            waitUntil: 'networkidle2',
-            timeout: 30000
-        });
+    // await page.goto(targetPage);
+    await page.goto(targetPage, {
+        waitUntil: 'networkidle2',
+        timeout: 30000
+    });
 
-        //either of these 3 ways return all links
-        hrefs = await page.$$eval('a', as => as.map(a => a.href));
-        // const hrefs = await page.evaluate(() => {
-        //     return Array.from(document.getElementsByTagName('a'), a => a.href);
-        // });
-        // const hrefs = await Promise.all((await page.$$('a')).map(async a => {
-        //     return await (await a.getProperty('href')).jsonValue();
-        // }));
-        console.log('hrefs: ',hrefs.length, hrefs);
-    }
+    //either of these 3 ways return all links
+    hrefs = await page.$$eval('a', as => as.map(a => a.href));
+    // const hrefs = await page.evaluate(() => {
+    //     return Array.from(document.getElementsByTagName('a'), a => a.href);
+    // });
+    // const hrefs = await Promise.all((await page.$$('a')).map(async a => {
+    //     return await (await a.getProperty('href')).jsonValue();
+    // }));
+    console.log('hrefs: ',hrefs.length, hrefs);
     return hrefs;
 };
 
 app.post('/api4', async function (req, res) {
     req.setTimeout(0);
-    let targetPage = req.body.targetPage || "";
+    let targetPage = req.body.targetPage1 || "";
     await scrape4(targetPage)
     .then((resultArr)=>{
         forLoop(resultArr)
@@ -817,8 +802,7 @@ app.post('/api4', async function (req, res) {
 let scrape5 = async (searchKey) => {
     const blockedResourceTypes = ['image','media','font','stylesheet'];
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox'], slowMo: 100});
-    // const browser = await puppeteer.launch({headless: false, slowMo: 100});
-    // const browser = await puppeteer.launch({slowMo: 100}); // need to slow down to content load
+    // const browser = await puppeteer.launch({headless: false, slowMo: 100}); // need to slow down to content load
 
     const page = await browser.newPage();
     // deal with navigation and page timeout, see the link
@@ -843,6 +827,7 @@ let scrape5 = async (searchKey) => {
     await page.keyboard.press('Enter');
     await navigationPromise;
 
+    await page.waitForTimeout(renInt(500, 600));
     await page.waitForSelector('#hdtb-tls');
 
     await page.click('#hdtb-tls');
@@ -852,11 +837,16 @@ let scrape5 = async (searchKey) => {
     // await page.click('[aria-label="All results"]');
     // new way to select and click on dropdown list, by xpath
     // select in chrome with $x("//div[contains(text(), 'All results')]")
+    await page.waitForTimeout(renInt(500, 600));
     const elements = await page.$x("//div[contains(text(), 'All results')]");
     await elements[0].click();
-    await page.waitForSelector('ul > li#li_1');
-    await page.click('ul > li#li_1');
+    // await page.waitForSelector('ul > li#li_1');
+    // await page.click('ul > li#li_1');
+    await page.waitForTimeout(renInt(500, 600));
+    const elemVerbatim = await page.$x("//a[contains(text(), 'Verbatim')]");
+    await elemVerbatim[0].click();
     await navigationPromise;
+    await page.waitForTimeout(renInt(500, 600));
 
     let pageNum = 0;
     let urls = [];
@@ -867,22 +857,27 @@ let scrape5 = async (searchKey) => {
         // google updated their code no longer select DOM like this
         // const arrOfElements = await page.$$('#rso > .g > .rc > .r > a');
         const arrOfElements = await page.$$('div.yuRUbf > a');
+        await page.waitForTimeout(renInt(500, 600));
         // const arrOfElements = await page.$$('#rso > .g > .rc .yuRUbf > a');
         // need to convert for loop to async function to wait
         // urls.push(...await forLoop(arrOfElements));  // old just array of url
         // urls.push(...await (await forLoop(arrOfElements)).map(result=>result.url));  // ugly
         const arrObj = await forLoop2(arrOfElements);
+        await page.waitForTimeout(renInt(500, 600));
         // const arrUrl = await arrObj.map(result=>result.url);
         // await urls.push(...arrUrl);
         await urls.push(...arrObj);
+        await page.waitForTimeout(renInt(500, 600));
         let nextLink = await page.$('a[id="pnnext"]');
         if (nextLink !== null) {
             await nextLink.click();
             await page.waitForNavigation();
+            await page.waitForTimeout(renInt(1000, 2000));
         } else {
             hasNext = false;
         }
     }
+    console.log("done scraping");
     await page.close();
     await browser.close();
     return urls;
@@ -923,21 +918,42 @@ let scrape5 = async (searchKey) => {
 //     });
 // });
 app.post('/api5', async function (req, res) {
+    // req.setTimeout(0);
+    // let searchKey = req.body.targetPage2 || "";
+    // const urls = await scrape5(searchKey);
+    // // console.log(urls);
+    // // res.send(urls);
+    // urlLoop(urls)
+    // .then((resultArray) => {
+    //     // console.log(resultArray);
+    //     // res.send(resultArray);
+    //     res.send(removeDuplicateResult(resultArray));
+    // })
+    // .catch((err)=>{
+    //     console.error(err);
+    //     res.status(200).send({error: 'TimeoutError', solution: 'refresh, try again'});
+    // });
+    //
     req.setTimeout(0);
     let searchKey = req.body.targetPage2 || "";
-    const urls = await scrape5(searchKey);
-    // console.log(urls);
-    // res.send(urls);
-    urlLoop(urls)
-    .then((resultArray) => {
-        // console.log(resultArray);
-        // res.send(resultArray);
-        res.send(removeDuplicateResult(resultArray));
-    })
-    .catch((err)=>{
-        console.error(err);
+    try{
+        const urls = await scrape5(searchKey);
+        urlLoop(urls)
+        .then((resultArray) => {
+            // console.log(resultArray);
+            // res.send(resultArray);
+            res.status(200).send(removeDuplicateResult(resultArray));
+        })
+        .catch((err)=>{
+            console.error(err);
+            res.status(200).send({error: 'TimeoutError', solution: 'refresh, try again'});
+        });
+        // res.status(200).send(removeDuplicateResult2(companies));
+        // res.status(200).send(urls);
+    }catch(err){
+        console.error(err)
         res.status(200).send({error: 'TimeoutError', solution: 'refresh, try again'});
-    });
+    }
 });
 
 let scrape6 = async (searchKey) => {
@@ -1046,4 +1062,34 @@ app.post('/api6', async function (req, res) {
         console.error(err)
         res.status(200).send({error: 'TimeoutError', solution: 'refresh, try again'});
     }
+});
+
+// scrape for all "a" tag's "href" content of given page
+// standard the page
+let scrape7 = async (targetPage) => {
+    let hrefs = [];
+    // other than normal html page, it can scrape xml sitemap page
+    if(targetPage.endsWith('.xml')){
+        await sitemap.fetch(targetPage)
+        .then(sites=>{
+            hrefs=sites.sites;
+        })
+        .catch(error => console.log(error));
+    }
+    else{
+        console.log('hrefs: ',hrefs.length, hrefs);
+    }
+    return hrefs;
+};
+
+app.post('/api7', async function (req, res) {
+    req.setTimeout(0);
+    let targetPage = req.body.targetPage4 || "";
+    await scrape7(targetPage)
+    .then((resultArr)=>{
+        forLoop(resultArr)
+        .then(resultArray => {
+            res.send(resultArray);
+        })
+    }).catch(() => {});    
 });
