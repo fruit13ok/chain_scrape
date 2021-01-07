@@ -471,6 +471,34 @@ let removeDuplicateResult2 = (allResult) => {
     return filteredArr;
 }
 
+//
+const loopUrlsForH1H2 = async (page, navigationPromise, urls) => {
+    let resultArray = [];
+    let response = null;
+    let numOfH1 = 0;
+    let numOfH2 = 0;
+    let curUrl = '';
+    for (let i = 0; i < urls.length; i++) {
+        curUrl = urls[i];
+        response = await page.goto(curUrl, { timeout: 10000, waitUntil: 'load' });
+        await navigationPromise;
+        await page.waitForTimeout(renInt(1000, 2000));
+        numOfH1 = await page.evaluate((selector) => {
+            let els = Array.from(document.querySelectorAll(selector));
+            return els ? els.length : "h1 error";
+        }, 'h1');
+        await page.waitForTimeout(renInt(500, 600));
+        numOfH2 = await page.evaluate((selector) => {
+            let els = Array.from(document.querySelectorAll(selector));
+            return els ? els.length : "h2 error";
+        }, 'h2');
+        await page.waitForTimeout(renInt(500, 600));
+        console.log({url: curUrl, numOfH1: numOfH1, numOfH2: numOfH2, status: response._status});
+        resultArray.push({url: curUrl, numOfH1: numOfH1, numOfH2: numOfH2, status: response._status});
+    }
+    return resultArray;
+}
+
 // scrape and post, later need to break them into their own files
 
 // the puppeteer filter doesn't work
@@ -1067,19 +1095,53 @@ app.post('/api6', async function (req, res) {
 // scrape for all "a" tag's "href" content of given page
 // standard the page
 let scrape7 = async (targetPage) => {
+    // let hrefs = [];
+    // // other than normal html page, it can scrape xml sitemap page
+    // if(targetPage.endsWith('.xml')){
+    //     await sitemap.fetch(targetPage)
+    //     .then(sites=>{
+    //         hrefs=sites.sites;
+    //     })
+    //     .catch(error => console.log(error));
+    // }
+    // else{
+    //     console.log('hrefs: ',hrefs.length, hrefs);
+    // }
+    // return hrefs;
+    let results = [];
     let hrefs = [];
-    // other than normal html page, it can scrape xml sitemap page
+    // get url from xml sitemap page
     if(targetPage.endsWith('.xml')){
-        await sitemap.fetch(targetPage)
-        .then(sites=>{
-            hrefs=sites.sites;
-        })
-        .catch(error => console.log(error));
+        try{
+            // hrefs = await (await sitemap.fetch(targetPage)).sites;
+            let getUrls = await sitemap.fetch(targetPage);
+            hrefs = await getUrls.sites;
+        }catch(error) {
+            console.log("Error, no site url");
+        }   
     }
     else{
-        console.log('hrefs: ',hrefs.length, hrefs);
+        console.log('This is not a xml sitemap link');
     }
-    return hrefs;
+
+    //
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox'], ignoreHTTPSErrors: true, slowMo: 100}); // need for real server
+    // var browser = await puppeteer.launch({headless: false, ignoreHTTPSErrors: true, slowMo: 100});  // need to slow down to content load
+
+    var page = await browser.newPage();
+    // deal with navigation and page timeout, see the link
+    // https://www.checklyhq.com/docs/browser-checks/timeouts/
+    var navigationPromise =  page.waitForNavigation();
+
+    await page.setUserAgent(userAgent.random().toString());
+    // await page.setDefaultNavigationTimeout(0);   // use when set your own timeout
+    // hrefs.unshift('https://httpstat.us/404')    // test for 404 page
+    results = await loopUrlsForH1H2(page, navigationPromise, hrefs);
+
+    await page.close();
+    await browser.close();
+    console.log("done scraping");
+    return results;
 };
 
 app.post('/api7', async function (req, res) {
@@ -1087,9 +1149,10 @@ app.post('/api7', async function (req, res) {
     let targetPage = req.body.targetPage4 || "";
     await scrape7(targetPage)
     .then((resultArr)=>{
-        forLoop(resultArr)
-        .then(resultArray => {
-            res.send(resultArray);
-        })
+        res.send(resultArr);
+        // forLoop(resultArr)
+        // .then(resultArray => {
+        //     res.send(resultArray);
+        // })
     }).catch(() => {});    
 });
