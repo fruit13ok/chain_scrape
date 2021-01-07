@@ -53,6 +53,17 @@ app.listen(port, () => {
 
 // helper functions
 
+// need Json result to be single level deep, change "businesshours" to "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
+var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+let formatBusinesshours = (businesshours) => {
+    let newdays = {"Sunday": "", "Monday": "","Tuesday": "","Wednesday": "","Thursday": "","Friday": "","Saturday": ""};
+    for (let i=0; i<businesshours.length; i++){
+        if(days.includes(businesshours[i].day)){
+        newdays[businesshours[i].day]=businesshours[i].hours.trim();
+        }
+    }
+    return newdays;
+};
 
 function renInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
@@ -298,6 +309,7 @@ const loopClickCompResult = async (page, navigationPromise) => {
 
     // click to each result, scrape that result page, go back to previous page
     for(var i=0; i<numOfCurResult; i++){
+    // for(var i=0; i<1; i++){
         await page.waitForSelector('div.section-result-content'); 
         var arrOfElements = await page.$$('div.section-result-content');
         await page.waitForTimeout(renInt(500, 600));
@@ -327,7 +339,7 @@ const loopClickCompResult = async (page, navigationPromise) => {
             await page.waitForSelector('.section-hero-header-title-title');
             name = await page.evaluate((selector) => {
                 let el = document.querySelector(selector);
-                return el ? el.innerText : "name error";
+                return el ? el.innerText.replace(/,/g, '') : "name error";
             }, '.section-hero-header-title-title');
             await page.waitForTimeout(renInt(500, 600));
 
@@ -367,7 +379,7 @@ const loopClickCompResult = async (page, navigationPromise) => {
                 console.log(divTexts);
                 matchAddress = divTexts.filter(word => word.match(regexAddress))[0];
                 if(matchAddress){
-                    address = matchAddress;
+                    address = matchAddress.replace(/,/g, '');
                 }
                 matchWebsites = divTexts.filter(word => word.match(regexDomainName));
                 // some content had multiple urls, last one looks better
@@ -402,7 +414,6 @@ const loopClickCompResult = async (page, navigationPromise) => {
                 if(tmpBHours != "businesshours error"){
                     var hoursArr = tmpBHours.replace(/\s/g, ' ').split(' ').filter(e=>e!="");
                     var curDay = {};
-                    var days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
                     for (let i=0; i<hoursArr.length; i++){
                         if(days.includes(hoursArr[i])){
                             if(i!=0){
@@ -419,7 +430,7 @@ const loopClickCompResult = async (page, navigationPromise) => {
                             curDay = {};
                         }
                     }
-                    const sorter = {"Monday": 1,"Tuesday": 2,"Wednesday": 3,"Thursday": 4,"Friday": 5,"Saturday": 6,"Sunday": 0};
+                    const sorter = {"Sunday": 0, "Monday": 1,"Tuesday": 2,"Wednesday": 3,"Thursday": 4,"Friday": 5,"Saturday": 6};
                     businesshours.sort((a, b)=> sorter[a.day]-sorter[b.day]);
                     console.log(businesshours);
                 }
@@ -428,7 +439,7 @@ const loopClickCompResult = async (page, navigationPromise) => {
             }
 
             // company data formet
-            companyJson = {name: name, category: category, address: address, phonenumber: phonenumber, website: website, logo: logo, mapID: mapID, businesshours: businesshours};
+            companyJson = {name: name, category: category, address: address, phonenumber: phonenumber, website: website, logo: logo, mapID: mapID, ...formatBusinesshours(businesshours)};
             curPageCompanies.push(companyJson);
             businesshours = [];
 
@@ -1143,7 +1154,6 @@ let scrape7 = async (targetPage) => {
     console.log("done scraping");
     return results;
 };
-
 app.post('/api7', async function (req, res) {
     req.setTimeout(0);
     let targetPage = req.body.targetPage4 || "";

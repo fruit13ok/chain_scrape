@@ -1,6 +1,6 @@
 console.log("Sanity Check: JS is working!");
-// let domain = "localhost";
-let domain = "165.232.52.237";   // scraperserver droplet (new) 
+let domain = "localhost";
+// let domain = "165.232.52.237";   // scraperserver droplet (new) 
 let port = 8000;
 
 let backendRoute = new URL("http://"+domain+":"+port+"/api");
@@ -34,7 +34,7 @@ const convertAndDownloadPDF = (jsonResult) => {
     doc.autoTable({
         head: [header],
         body: [...data],
-        columnStyles: {0: {cellWidth: 150}}
+        // columnStyles: {0: {cellWidth: 150}}
     })
     doc.save('test.pdf')
 };
