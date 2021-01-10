@@ -1199,8 +1199,8 @@ let scrape8 = async (targetPage) => {
     // console.log(filteredStrArr);
     await page.waitForTimeout(renInt(500, 600));
     
-    // await page.close();
-    // await browser.close();
+    await page.close();
+    await browser.close();
     console.log("done scraping");
     return filteredStrArr;
 };
