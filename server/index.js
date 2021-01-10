@@ -1166,3 +1166,49 @@ app.post('/api7', async function (req, res) {
         // })
     }).catch(() => {});    
 });
+
+let scrape8 = async (targetPage) => {
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox'], ignoreHTTPSErrors: true, slowMo: 100}); // need for real server
+    // var browser = await puppeteer.launch({headless: false, ignoreHTTPSErrors: true, slowMo: 100});  // need to slow down to content load
+
+    var page = await browser.newPage();
+    // deal with navigation and page timeout, see the link
+    // https://www.checklyhq.com/docs/browser-checks/timeouts/
+    var navigationPromise =  page.waitForNavigation();
+
+    // await page.setUserAgent(userAgent.random().toString());
+    // await page.setDefaultNavigationTimeout(0);   // use when set your own timeout
+
+    await page.goto(targetPage, { timeout: 10000, waitUntil: 'load' });
+    await navigationPromise;
+
+    await page.waitForTimeout(renInt(500, 600));
+    let str = await page.evaluate((selector) => {
+        let el = document.querySelector(selector);
+        return el ? el.innerText : "innerText error";
+    }, 'body');
+    // console.log(str);
+    // break word like "HelloWorld" to "Hello World"
+    let formatedStr = str.replace(/([a-z0-9])([A-Z][a-z0-9])/g, '$1 $2').trim();
+    // console.log(formatedStr);
+    // split string to array by space
+    let strArr = formatedStr.split(/\s/);
+    // console.log(strArr);
+    // filter out empty string from array
+    var filteredStrArr = strArr.filter(el => el != '');
+    // console.log(filteredStrArr);
+    await page.waitForTimeout(renInt(500, 600));
+    
+    // await page.close();
+    // await browser.close();
+    console.log("done scraping");
+    return filteredStrArr;
+};
+app.post('/api8', async function (req, res) {
+    req.setTimeout(0);
+    let targetPage = req.body.targetPage5 || "";
+    await scrape8(targetPage)
+    .then((resultArr)=>{
+        res.send(wordCountObj(resultArr));
+    }).catch(() => {}); 
+});

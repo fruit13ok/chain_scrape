@@ -153,3 +153,7 @@ part 4 add scrape xml sitemap page
 
 //////////////////////////////////////////////////////////////
 change part 4, used Puppeteer to scrape number of H1 and H2 and "goto" response "_status" for status code
+
+
+//////////////////////////////////////////////////////////////
+add part 8 wordcount

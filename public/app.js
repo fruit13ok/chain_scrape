@@ -10,6 +10,7 @@ let backendRoute4 = new URL("http://"+domain+":"+port+"/api4");
 let backendRoute5 = new URL("http://"+domain+":"+port+"/api5");
 let backendRoute6 = new URL("http://"+domain+":"+port+"/api6");
 let backendRoute7 = new URL("http://"+domain+":"+port+"/api7");
+let backendRoute8 = new URL("http://"+domain+":"+port+"/api8");
 
 // this frontend scrape function do post request to backend scrape route,
 // pass in back end route and form object of search key and search depth
@@ -348,6 +349,35 @@ const getScrape7 = async (backendRoute7, formObj) => {
     return jResult;
 };
 
+const getScrape8 = async (backendRoute8, formObj) => {
+    let jResult = [];
+    try {
+        const response = await fetch(backendRoute8, {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify(formObj), // data can be `string` or {object}!
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
+
+        console.log('response',response);
+        let json = await response.json();
+        console.log('json',json);
+        let mList = document.getElementById('result-list');
+        mList.innerHTML = '';
+        // add downloadable buttons PDF CSV
+        generateDownloadButtons(mList);
+        let pre = document.createElement('pre');
+        pre.innerHTML = JSON.stringify(json, null, 4);
+        mList.appendChild(pre);
+        jResult = json;
+    }catch (error) {
+        console.log(error);
+    }
+    return jResult;
+};
+
 // submit button clicked, pass form data into scrape function and invoke it
 $(function(){
     
@@ -454,6 +484,22 @@ $(function(){
         // async function have to be call inside async function, so use a iife empty function here
         (async () => {
             jsonResult = await getScrape7(backendRoute7, formObj)
+        })();
+    });
+
+    $("#button8").on("click", function(){
+        let formArr = $("#form8").serializeArray();
+        // convert form array of objects to an object of properties
+        let formObj = formArr.reduce((map, obj) => {
+            map[obj.name] = obj.value;
+            return map;
+        }, {});
+        document.getElementById('result-list').innerHTML = 
+        '<p style="color:blue;font-size:46px;"><strong> ... Find related searchs please wait ... </strong></p>';
+        console.log('formObj',formObj);
+        // async function have to be call inside async function, so use a iife empty function here
+        (async () => {
+            jsonResult = await getScrape8(backendRoute8, formObj)
         })();
     });
 
