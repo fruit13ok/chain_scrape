@@ -292,8 +292,8 @@ const loopClickCompResult = async (page, navigationPromise) => {
     console.log("# of results this page: ", numOfCurResult);
 
     // click to each result, scrape that result page, go back to previous page
-    // for(var i=0; i<numOfCurResult; i++){
-    for(var i=0; i<3; i++){
+    for(var i=0; i<numOfCurResult; i++){
+    // for(var i=0; i<3; i++){
         await page.waitForSelector('div.section-result-content'); 
         var arrOfElements = await page.$$('div.section-result-content');
         await page.waitForTimeout(renInt(500, 600));
