@@ -284,22 +284,6 @@ const loopClickCompResult = async (page, navigationPromise) => {
     const regexDomainName = /(https?:\/\/)?(www\.)?([\w\d]+)\.([\w]+)(\.[\w]+)?(\/[^ ]*)?/g;
     // regular expression for phone number
     const regexPhoneNum = /((\d)\D)?(\(?(\d\d\d)\)?)?\D(\d\d\d)\D(\d\d\d\d)/g;
-    
-    // I plan to identify Ads in the later version
-    // await page.waitForSelector('div.section-result-content');
-    // var numOfCurResult = await page.evaluate(() => {
-    //     var arr = [];
-    //     var elements = document.querySelectorAll('div.section-result-content');
-    //     for(var i=0; i<elements.length; i++){
-    //         if(elements[i].querySelector('.section-result-title-wta-icon')){
-    //             arr.push(true);
-    //         }else{
-    //             arr.push(false);
-    //         }
-    //     }
-    //     return arr;
-    // });
-    // console.log('numOfCurResult: ', numOfCurResult);
 
     // need to reevaluate number of results, sometime will keep using firsttime result, I applied backup plan
     await page.waitForSelector('div.section-result-content');
@@ -308,8 +292,8 @@ const loopClickCompResult = async (page, navigationPromise) => {
     console.log("# of results this page: ", numOfCurResult);
 
     // click to each result, scrape that result page, go back to previous page
-    for(var i=0; i<numOfCurResult; i++){
-    // for(var i=0; i<1; i++){
+    // for(var i=0; i<numOfCurResult; i++){
+    for(var i=0; i<3; i++){
         await page.waitForSelector('div.section-result-content'); 
         var arrOfElements = await page.$$('div.section-result-content');
         await page.waitForTimeout(renInt(500, 600));
@@ -343,28 +327,32 @@ const loopClickCompResult = async (page, navigationPromise) => {
             }, '.section-hero-header-title-title');
             await page.waitForTimeout(renInt(500, 600));
 
-            await page.waitForSelector('button[aria-label="Share"]');
-            shareBtn = await page.$('button[aria-label="Share"]');
-            await page.waitForTimeout(renInt(500, 600));
-            if(shareBtn){
-                await shareBtn.click();
+            try {
+                await page.waitForXPath("//div[contains(text(), 'Share')]", { timeout: 5000 }); // default 30000
+                const shareBtn = await page.$x("//div[contains(text(), 'Share')]");
+                console.log('test');
+                await shareBtn[0].click(); // try to use click as hover
                 await navigationPromise;
-                await page.waitForTimeout(renInt(2000, 3000));
+                await page.waitForTimeout(renInt(500, 600));
+
+                await page.waitForSelector('input.section-copy-link-input');
+                mapID = await page.evaluate((selector) => {
+                    let el = document.querySelector(selector);
+                    return el ? el.value : "no mapID error";
+                }, 'input.section-copy-link-input');
+                await page.waitForTimeout(renInt(500, 600));
+                await page.waitForSelector('button[aria-label="Close"]');
+                closeBtn = await page.$('button[aria-label="Close"]');
+                await page.waitForTimeout(renInt(500, 600));
+                if(closeBtn){
+                    await closeBtn.click();
+                    await navigationPromise;
+                    await page.waitForTimeout(renInt(2000, 3000));
+                }
+            } catch(error) {
+                console.log("Error, no Share link");
             }
-            await page.waitForSelector('input.section-copy-link-input');
-            mapID = await page.evaluate((selector) => {
-                let el = document.querySelector(selector);
-                return el ? el.value : "no mapID error";
-            }, 'input.section-copy-link-input');
             await page.waitForTimeout(renInt(500, 600));
-            await page.waitForSelector('button[aria-label="Close"]');
-            closeBtn = await page.$('button[aria-label="Close"]');
-            await page.waitForTimeout(renInt(500, 600));
-            if(closeBtn){
-                await closeBtn.click();
-                await navigationPromise;
-                await page.waitForTimeout(renInt(2000, 3000));
-            }
 
             // array of string company data, array size will differ by differ company
             // I use regex to parse data
@@ -997,8 +985,8 @@ app.post('/api5', async function (req, res) {
 
 let scrape6 = async (searchKey) => {
     // don't blocked resource types to improve speed, google maps needs most of them to work
-    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox'], ignoreHTTPSErrors: true , slowMo: 100}); // need for real server, need image for map, so no '--blink-settings=imagesEnabled=false'
-    // var browser = await puppeteer.launch({headless: false, ignoreHTTPSErrors: true, slowMo: 100});
+    // const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox'], ignoreHTTPSErrors: true , slowMo: 100}); // need for real server, need image for map, so no '--blink-settings=imagesEnabled=false'
+    var browser = await puppeteer.launch({headless: false, ignoreHTTPSErrors: true, slowMo: 100});
 
     var page = await browser.newPage();
     // deal with navigation and page timeout, see the link
