@@ -20,6 +20,20 @@ let elapsedSeconds;
 // variable for api4 might want to put it with in, not up here
 let jsonResult = [];
 
+// copy JSON result to clipboard, I use "textarea" to maintain text format
+// "input" will be string
+const copyToClipboard = () => {
+    var textToCopy = document.getElementById("preresult").innerText;
+    var tempInputElem = document.createElement("textarea"); // textarea save text format too
+    tempInputElem.type = "text";
+    tempInputElem.value = textToCopy;
+    document.body.appendChild(tempInputElem);
+    tempInputElem.select(); // select only work for input or textarea
+    tempInputElem.setSelectionRange(0, 99999)   // for mobile phone
+    document.execCommand("Copy");
+    document.body.removeChild(tempInputElem);
+}
+
 // make PDF with jspdf and jspdf-autotable
 // learn more from my "all_links" repo
 // Default export is a4 paper, portrait, using millimeters for units
@@ -84,15 +98,23 @@ const generateDownloadButtons = (htmlElement) => {
     buttonPDF.id = "btnpdf";
     buttonPDF.innerHTML = "Download PDF";
     buttonPDF.className = "btn btn-info mt-2 mb-2";
-    let span = document.createElement('span');
-    span.innerHTML = ' ';
+    let span1 = document.createElement('span');
+    span1.innerHTML = ' ';
     let buttonCSV = document.createElement('button');
     buttonCSV.id = "btncsv";
     buttonCSV.innerHTML = "Download CSV";
     buttonCSV.className = "btn btn-info mt-2 mb-2";
+    let span2 = document.createElement('span');
+    span2.innerHTML = ' ';
+    let buttonCopy = document.createElement('button');
+    buttonCopy.id = "btncopy";
+    buttonCopy.innerHTML = "Copy Result";
+    buttonCopy.className = "btn btn-info mt-2 mb-2";
     htmlElement.appendChild(buttonPDF);
-    htmlElement.appendChild(span);
+    htmlElement.appendChild(span1);
     htmlElement.appendChild(buttonCSV);
+    htmlElement.appendChild(span2);
+    htmlElement.appendChild(buttonCopy);
 };
 
 // add dropdown list to filter the JSON result by count
@@ -153,7 +175,8 @@ const getScrape = async (backendRoute, formObj) => {
         // add dropdown list to filter JSON result by count
         generateDropdown(mList);
         let pre = document.createElement('pre');
-        pre.id = "pre";
+        pre.id = "preresult";
+        pre.innerHTML = JSON.stringify(json, null, 4);
         // filter JSON result by count
         jResult = filterByCount(json,0);
         pre.innerHTML = JSON.stringify(jResult, null, 4);
@@ -178,7 +201,7 @@ const getScrape2 = async (backendRoute2, formObj) => {
             }
         });
 
-	   let timeComplete = performance.now();
+	    let timeComplete = performance.now();
 
         let minutes = Math.floor((timeComplete - timeStart) / 60000);
         let seconds = (((timeComplete - timeStart) % 60000) / 1000).toFixed(0);
@@ -188,19 +211,25 @@ const getScrape2 = async (backendRoute2, formObj) => {
         console.log('json',json);
         let mList = document.getElementById('result-list');
         mList.innerHTML = '';
-        let ul = document.createElement('ul');
-	    ul.className = 'list-group';
-        mList.appendChild(ul);
-        for(let i=0; i<json.length; i++){
-            let li = document.createElement('li');
-	        li.className = 	'list-group-item';
-            ul.appendChild(li);
-            li.innerHTML += JSON.stringify(json[i])+',';
-        }
-	elapsedMinutes = minutes;
-	elapsedSeconds = seconds;
-	document.getElementById('elapsed-time').innerHTML =  '<p><b>Response Time: </b>' + elapsedMinutes + ' minutes and ' + elapsedSeconds + ' seconds</p>';
-
+        // let ul = document.createElement('ul');
+	    // ul.className = 'list-group';
+        // mList.appendChild(ul);
+        // for(let i=0; i<json.length; i++){
+        //     let li = document.createElement('li');
+	    //     li.className = 	'list-group-item';
+        //     ul.appendChild(li);
+        //     li.innerHTML += JSON.stringify(json[i])+',';
+        // }
+        // add downloadable buttons PDF CSV
+        generateDownloadButtons(mList);
+        let pre = document.createElement('pre');
+        pre.id = "preresult";
+        pre.innerHTML = JSON.stringify(json, null, 4);
+        mList.appendChild(pre);
+        jResult = json;
+        elapsedMinutes = minutes;
+        elapsedSeconds = seconds;
+        document.getElementById('elapsed-time').innerHTML =  '<p><b>Response Time: </b>' + elapsedMinutes + ' minutes and ' + elapsedSeconds + ' seconds</p>';
     }catch (error) {
         console.log(error);
     }
@@ -226,6 +255,7 @@ const getScrape3 = async (backendRoute3, formObj) => {
         // this version is JSON format array of objects
         // each object has search key and result array
         let pre = document.createElement('pre');
+        pre.id = "preresult";
         pre.innerHTML = JSON.stringify(json, null, 4);
         mList.appendChild(pre);
     }catch (error) {
@@ -253,6 +283,7 @@ const getScrape4 = async (backendRoute4, formObj) => {
         // add downloadable buttons PDF CSV
         generateDownloadButtons(mList);
         let pre = document.createElement('pre');
+        pre.id = "preresult";
         pre.innerHTML = JSON.stringify(json, null, 4);
         mList.appendChild(pre);
         jResult = json;
@@ -282,6 +313,7 @@ const getScrape5 = async (backendRoute5, formObj) => {
         // add downloadable buttons PDF CSV
         generateDownloadButtons(mList);
         let pre = document.createElement('pre');
+        pre.id = "preresult";
         pre.innerHTML = JSON.stringify(json, null, 4);
         mList.appendChild(pre);
         jResult = json;
@@ -311,6 +343,7 @@ const getScrape6 = async (backendRoute6, formObj) => {
         // add downloadable buttons PDF CSV
         generateDownloadButtons(mList);
         let pre = document.createElement('pre');
+        pre.id = "preresult";
         pre.innerHTML = JSON.stringify(json, null, 4);
         mList.appendChild(pre);
         jResult = json;
@@ -340,6 +373,7 @@ const getScrape7 = async (backendRoute7, formObj) => {
         // add downloadable buttons PDF CSV
         generateDownloadButtons(mList);
         let pre = document.createElement('pre');
+        pre.id = "preresult";
         pre.innerHTML = JSON.stringify(json, null, 4);
         mList.appendChild(pre);
         jResult = json;
@@ -369,6 +403,7 @@ const getScrape8 = async (backendRoute8, formObj) => {
         // add downloadable buttons PDF CSV
         generateDownloadButtons(mList);
         let pre = document.createElement('pre');
+        pre.id = "preresult";
         pre.innerHTML = JSON.stringify(json, null, 4);
         mList.appendChild(pre);
         jResult = json;
@@ -513,9 +548,14 @@ $(function(){
         convertAndDownloadCSV(jsonResult);
     });
 
+    // onclick copy result inside pre to clipboard
+    $("#result-list").on("click", "#btncopy", function(){
+        copyToClipboard();
+    });
+
     // onclick dropdown list filter JSON result by count 
     $("#result-list").on("change", "#mySelect", function(){
-        let pre = document.getElementById('pre');
+        let pre = document.getElementById('preresult');
         pre.innerHTML = JSON.stringify(filterByCount(jsonResult, $(this).val()), null, 4);
     });
 });

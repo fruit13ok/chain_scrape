@@ -538,6 +538,7 @@ let scrape = async (searchWord) => {
     // await page.waitFor(1000);
     await page.close();
     await browser.close();
+    console.log("done scraping");
     return results;
 };
 
@@ -661,7 +662,8 @@ let scrape2 = async (targetPage, searchKeys) => {
     }
     console.log(resultArr);
     await page.close();
-	await browser.close();
+    await browser.close();
+    console.log("done scraping");
     return resultArr;
     // this return all links
     // const hrefs = await page.$$eval('a', as => as.map(a => a.href));
@@ -710,6 +712,7 @@ let scrape3 = async (searchWord) => {
     });
     await page.close();
     await browser.close();
+    console.log("done scraping");
     return result;
 };
 
@@ -907,6 +910,7 @@ let scrape5 = async (searchKey) => {
     console.log("done scraping");
     await page.close();
     await browser.close();
+    console.log("done scraping");
     return urls;
 };
 
@@ -1073,9 +1077,9 @@ let scrape6 = async (searchKey) => {
     // // array of current page results
     // elements[0].querySelectorAll('.sJKr7qpXOXd__result-container.sJKr7qpXOXd__two-actions.sJKr7qpXOXd__wide-margin');
 
-    console.log("done scraping");
     await page.close();
     await browser.close();
+    console.log("done scraping");
     return urls;
 };
 app.post('/api6', async function (req, res) {

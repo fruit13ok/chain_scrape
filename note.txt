@@ -64,7 +64,7 @@ control-c
 pm2 monit
 control-c
 // run server with pm2
-pm2 start server/index.js
+pm2 start server/index.js --max-memory-restart 100M
 // logout droplet
 exit
 go to http://165.232.52.237:8000/
