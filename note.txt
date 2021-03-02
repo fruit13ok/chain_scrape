@@ -157,3 +157,571 @@ change part 4, used Puppeteer to scrape number of H1 and H2 and "goto" response 
 
 //////////////////////////////////////////////////////////////
 add part 8 wordcount
+
+
+////////////////////////////////////////////////////////////
+part 6 use search keys as PDF / CSV file name
+
+////////////////////////////////////////////////////////////
+more google url parameters
+I am using "gl" instead of "cr"
+
+// may be useful later
+https://web.archive.org/web/20070708030513/http://mapki.com/wiki/Google_Map_Parameters
+
+// using cr= to filter by country
+https://developers.google.com/custom-search/docs/xml_results#websearch-query-parameter-definitions
+https://moz.com/blog/the-ultimate-guide-to-the-google-search-parameters
+
+cr=countryCA
+
+Description	
+Optional. The cr parameter restricts search results to documents originating in a particular country. You may use Boolean operators in the cr parameter's value.
+
+Google WebSearch determines the country of a document by analyzing:
+
+the top-level domain (TLD) of the document's URL
+the geographic location of the Web server's IP address
+See the Country (cr) Parameter Values section for a list of valid values for this parameter.
+
+Examples	q=Frodo&cr=countryNZ
+
+Afghanistan	countryAF
+Albania	countryAL
+Algeria	countryDZ
+American Samoa	countryAS
+Andorra	countryAD
+Angola	countryAO
+Anguilla	countryAI
+Antarctica	countryAQ
+Antigua and Barbuda	countryAG
+Argentina	countryAR
+Armenia	countryAM
+Aruba	countryAW
+Australia	countryAU
+Austria	countryAT
+Azerbaijan	countryAZ
+Bahamas	countryBS
+Bahrain	countryBH
+Bangladesh	countryBD
+Barbados	countryBB
+Belarus	countryBY
+Belgium	countryBE
+Belize	countryBZ
+Benin	countryBJ
+Bermuda	countryBM
+Bhutan	countryBT
+Bolivia	countryBO
+Bosnia and Herzegovina	countryBA
+Botswana	countryBW
+Bouvet Island	countryBV
+Brazil	countryBR
+British Indian Ocean Territory	countryIO
+Brunei Darussalam	countryBN
+Bulgaria	countryBG
+Burkina Faso	countryBF
+Burundi	countryBI
+Cambodia	countryKH
+Cameroon	countryCM
+Canada	countryCA
+Cape Verde	countryCV
+Cayman Islands	countryKY
+Central African Republic	countryCF
+Chad	countryTD
+Chile	countryCL
+China	countryCN
+Christmas Island	countryCX
+Cocos (Keeling) Islands	countryCC
+Colombia	countryCO
+Comoros	countryKM
+Congo	countryCG
+Congo, the Democratic Republic of the	countryCD
+Cook Islands	countryCK
+Costa Rica	countryCR
+Cote D'ivoire	countryCI
+Croatia (Hrvatska)	countryHR
+Cuba	countryCU
+Cyprus	countryCY
+Czech Republic	countryCZ
+Denmark	countryDK
+Djibouti	countryDJ
+Dominica	countryDM
+Dominican Republic	countryDO
+East Timor	countryTP
+Ecuador	countryEC
+Egypt	countryEG
+El Salvador	countrySV
+Equatorial Guinea	countryGQ
+Eritrea	countryER
+Estonia	countryEE
+Ethiopia	countryET
+European Union	countryEU
+Falkland Islands (Malvinas)	countryFK
+Faroe Islands	countryFO
+Fiji	countryFJ
+Finland	countryFI
+France	countryFR
+France, Metropolitan	countryFX
+French Guiana	countryGF
+French Polynesia	countryPF
+French Southern Territories	countryTF
+Gabon	countryGA
+Gambia	countryGM
+Georgia	countryGE
+Germany	countryDE
+Ghana	countryGH
+Gibraltar	countryGI
+Greece	countryGR
+Greenland	countryGL
+Grenada	countryGD
+Guadeloupe	countryGP
+Guam	countryGU
+Guatemala	countryGT
+Guinea	countryGN
+Guinea-Bissau	countryGW
+Guyana	countryGY
+Haiti	countryHT
+Heard Island and Mcdonald Islands	countryHM
+Holy See (Vatican City State)	countryVA
+Honduras	countryHN
+Hong Kong	countryHK
+Hungary	countryHU
+Iceland	countryIS
+India	countryIN
+Indonesia	countryID
+Iran, Islamic Republic of	countryIR
+Iraq	countryIQ
+Ireland	countryIE
+Israel	countryIL
+Italy	countryIT
+Jamaica	countryJM
+Japan	countryJP
+Jordan	countryJO
+Kazakhstan	countryKZ
+Kenya	countryKE
+Kiribati	countryKI
+Korea, Democratic People's Republic of	countryKP
+Korea, Republic of	countryKR
+Kuwait	countryKW
+Kyrgyzstan	countryKG
+Lao People's Democratic Republic	countryLA
+Latvia	countryLV
+Lebanon	countryLB
+Lesotho	countryLS
+Liberia	countryLR
+Libyan Arab Jamahiriya	countryLY
+Liechtenstein	countryLI
+Lithuania	countryLT
+Luxembourg	countryLU
+Macao	countryMO
+Macedonia, the Former Yugosalv Republic of	countryMK
+Madagascar	countryMG
+Malawi	countryMW
+Malaysia	countryMY
+Maldives	countryMV
+Mali	countryML
+Malta	countryMT
+Marshall Islands	countryMH
+Martinique	countryMQ
+Mauritania	countryMR
+Mauritius	countryMU
+Mayotte	countryYT
+Mexico	countryMX
+Micronesia, Federated States of	countryFM
+Moldova, Republic of	countryMD
+Monaco	countryMC
+Mongolia	countryMN
+Montserrat	countryMS
+Morocco	countryMA
+Mozambique	countryMZ
+Myanmar	countryMM
+Namibia	countryNA
+Nauru	countryNR
+Nepal	countryNP
+Netherlands	countryNL
+Netherlands Antilles	countryAN
+New Caledonia	countryNC
+New Zealand	countryNZ
+Nicaragua	countryNI
+Niger	countryNE
+Nigeria	countryNG
+Niue	countryNU
+Norfolk Island	countryNF
+Northern Mariana Islands	countryMP
+Norway	countryNO
+Oman	countryOM
+Pakistan	countryPK
+Palau	countryPW
+Palestinian Territory	countryPS
+Panama	countryPA
+Papua New Guinea	countryPG
+Paraguay	countryPY
+Peru	countryPE
+Philippines	countryPH
+Pitcairn	countryPN
+Poland	countryPL
+Portugal	countryPT
+Puerto Rico	countryPR
+Qatar	countryQA
+Reunion	countryRE
+Romania	countryRO
+Russian Federation	countryRU
+Rwanda	countryRW
+Saint Helena	countrySH
+Saint Kitts and Nevis	countryKN
+Saint Lucia	countryLC
+Saint Pierre and Miquelon	countryPM
+Saint Vincent and the Grenadines	countryVC
+Samoa	countryWS
+San Marino	countrySM
+Sao Tome and Principe	countryST
+Saudi Arabia	countrySA
+Senegal	countrySN
+Serbia and Montenegro	countryCS
+Seychelles	countrySC
+Sierra Leone	countrySL
+Singapore	countrySG
+Slovakia	countrySK
+Slovenia	countrySI
+Solomon Islands	countrySB
+Somalia	countrySO
+South Africa	countryZA
+South Georgia and the South Sandwich Islands	countryGS
+Spain	countryES
+Sri Lanka	countryLK
+Sudan	countrySD
+Suriname	countrySR
+Svalbard and Jan Mayen	countrySJ
+Swaziland	countrySZ
+Sweden	countrySE
+Switzerland	countryCH
+Syrian Arab Republic	countrySY
+Taiwan, Province of China	countryTW
+Tajikistan	countryTJ
+Tanzania, United Republic of	countryTZ
+Thailand	countryTH
+Togo	countryTG
+Tokelau	countryTK
+Tonga	countryTO
+Trinidad and Tobago	countryTT
+Tunisia	countryTN
+Turkey	countryTR
+Turkmenistan	countryTM
+Turks and Caicos Islands	countryTC
+Tuvalu	countryTV
+Uganda	countryUG
+Ukraine	countryUA
+United Arab Emirates	countryAE
+United Kingdom	countryUK
+United States	countryUS
+United States Minor Outlying Islands	countryUM
+Uruguay	countryUY
+Uzbekistan	countryUZ
+Vanuatu	countryVU
+Venezuela	countryVE
+Vietnam	countryVN
+Virgin Islands, British	countryVG
+Virgin Islands, U.S.	countryVI
+Wallis and Futuna	countryWF
+Western Sahara	countryEH
+Yemen	countryYE
+Yugoslavia	countryYU
+Zambia	countryZM
+Zimbabwe	countryZW
+
+
+gl=CA
+
+Description	
+Optional. The gl parameter value is a two-letter country code. For WebSearch results, the gl parameter boosts search results whose country of origin matches the parameter value. See the Country Codes section for a list of valid values.
+
+Specifying a gl parameter value in WebSearch requests should improve the relevance of results. This is particularly true for international customers and, even more specifically, for customers in English-speaking countries other than the United States.
+
+Examples	
+This request boosts documents written in the United Kingdom in WebSearch results:
+q=pizza&gl=uk
+
+Afghanistan	af
+Albania	al
+Algeria	dz
+American Samoa	as
+Andorra	ad
+Angola	ao
+Anguilla	ai
+Antarctica	aq
+Antigua and Barbuda	ag
+Argentina	ar
+Armenia	am
+Aruba	aw
+Australia	au
+Austria	at
+Azerbaijan	az
+Bahamas	bs
+Bahrain	bh
+Bangladesh	bd
+Barbados	bb
+Belarus	by
+Belgium	be
+Belize	bz
+Benin	bj
+Bermuda	bm
+Bhutan	bt
+Bolivia	bo
+Bosnia and Herzegovina	ba
+Botswana	bw
+Bouvet Island	bv
+Brazil	br
+British Indian Ocean Territory	io
+Brunei Darussalam	bn
+Bulgaria	bg
+Burkina Faso	bf
+Burundi	bi
+Cambodia	kh
+Cameroon	cm
+Canada	ca
+Cape Verde	cv
+Cayman Islands	ky
+Central African Republic	cf
+Chad	td
+Chile	cl
+China	cn
+Christmas Island	cx
+Cocos (Keeling) Islands	cc
+Colombia	co
+Comoros	km
+Congo	cg
+Congo, the Democratic Republic of the	cd
+Cook Islands	ck
+Costa Rica	cr
+Cote D'ivoire	ci
+Croatia	hr
+Cuba	cu
+Cyprus	cy
+Czech Republic	cz
+Denmark	dk
+Djibouti	dj
+Dominica	dm
+Dominican Republic	do
+Ecuador	ec
+Egypt	eg
+El Salvador	sv
+Equatorial Guinea	gq
+Eritrea	er
+Estonia	ee
+Ethiopia	et
+Falkland Islands (Malvinas)	fk
+Faroe Islands	fo
+Fiji	fj
+Finland	fi
+France	fr
+French Guiana	gf
+French Polynesia	pf
+French Southern Territories	tf
+Gabon	ga
+Gambia	gm
+Georgia	ge
+Germany	de
+Ghana	gh
+Gibraltar	gi
+Greece	gr
+Greenland	gl
+Grenada	gd
+Guadeloupe	gp
+Guam	gu
+Guatemala	gt
+Guinea	gn
+Guinea-Bissau	gw
+Guyana	gy
+Haiti	ht
+Heard Island and Mcdonald Islands	hm
+Holy See (Vatican City State)	va
+Honduras	hn
+Hong Kong	hk
+Hungary	hu
+Iceland	is
+India	in
+Indonesia	id
+Iran, Islamic Republic of	ir
+Iraq	iq
+Ireland	ie
+Israel	il
+Italy	it
+Jamaica	jm
+Japan	jp
+Jordan	jo
+Kazakhstan	kz
+Kenya	ke
+Kiribati	ki
+Korea, Democratic People's Republic of	kp
+Korea, Republic of	kr
+Kuwait	kw
+Kyrgyzstan	kg
+Lao People's Democratic Republic	la
+Latvia	lv
+Lebanon	lb
+Lesotho	ls
+Liberia	lr
+Libyan Arab Jamahiriya	ly
+Liechtenstein	li
+Lithuania	lt
+Luxembourg	lu
+Macao	mo
+Macedonia, the Former Yugosalv Republic of	mk
+Madagascar	mg
+Malawi	mw
+Malaysia	my
+Maldives	mv
+Mali	ml
+Malta	mt
+Marshall Islands	mh
+Martinique	mq
+Mauritania	mr
+Mauritius	mu
+Mayotte	yt
+Mexico	mx
+Micronesia, Federated States of	fm
+Moldova, Republic of	md
+Monaco	mc
+Mongolia	mn
+Montserrat	ms
+Morocco	ma
+Mozambique	mz
+Myanmar	mm
+Namibia	na
+Nauru	nr
+Nepal	np
+Netherlands	nl
+Netherlands Antilles	an
+New Caledonia	nc
+New Zealand	nz
+Nicaragua	ni
+Niger	ne
+Nigeria	ng
+Niue	nu
+Norfolk Island	nf
+Northern Mariana Islands	mp
+Norway	no
+Oman	om
+Pakistan	pk
+Palau	pw
+Palestinian Territory, Occupied	ps
+Panama	pa
+Papua New Guinea	pg
+Paraguay	py
+Peru	pe
+Philippines	ph
+Pitcairn	pn
+Poland	pl
+Portugal	pt
+Puerto Rico	pr
+Qatar	qa
+Reunion	re
+Romania	ro
+Russian Federation	ru
+Rwanda	rw
+Saint Helena	sh
+Saint Kitts and Nevis	kn
+Saint Lucia	lc
+Saint Pierre and Miquelon	pm
+Saint Vincent and the Grenadines	vc
+Samoa	ws
+San Marino	sm
+Sao Tome and Principe	st
+Saudi Arabia	sa
+Senegal	sn
+Serbia and Montenegro	cs
+Seychelles	sc
+Sierra Leone	sl
+Singapore	sg
+Slovakia	sk
+Slovenia	si
+Solomon Islands	sb
+Somalia	so
+South Africa	za
+South Georgia and the South Sandwich Islands	gs
+Spain	es
+Sri Lanka	lk
+Sudan	sd
+Suriname	sr
+Svalbard and Jan Mayen	sj
+Swaziland	sz
+Sweden	se
+Switzerland	ch
+Syrian Arab Republic	sy
+Taiwan, Province of China	tw
+Tajikistan	tj
+Tanzania, United Republic of	tz
+Thailand	th
+Timor-Leste	tl
+Togo	tg
+Tokelau	tk
+Tonga	to
+Trinidad and Tobago	tt
+Tunisia	tn
+Turkey	tr
+Turkmenistan	tm
+Turks and Caicos Islands	tc
+Tuvalu	tv
+Uganda	ug
+Ukraine	ua
+United Arab Emirates	ae
+United Kingdom	uk
+United States	us
+United States Minor Outlying Islands	um
+Uruguay	uy
+Uzbekistan	uz
+Vanuatu	vu
+Venezuela	ve
+Viet Nam	vn
+Virgin Islands, British	vg
+Virgin Islands, U.S.	vi
+Wallis and Futuna	wf
+Western Sahara	eh
+Yemen	ye
+Zambia	zm
+Zimbabwe	zw
+
+
+///////////////////////////// search box filter keyword ///////////////////////////////
+
+//
+https://ahrefs.com/blog/google-advanced-search-operators/
+
+// less useful
+https://www.youtube.com/watch?v=LQrWW4ovsCA&list=PLn7scx19fuDE0AZBu3I6bgo9L7PeMiFFK&index=6
+https://www.youtube.com/watch?v=7ond5eF7L-I
+https://www.youtube.com/watch?v=erZ3IyBCXdY
+
+link:
+Find pages linking to a specific domain or URL. Google killed this operator in 2017, but it does still show some results—they likely aren’t particularly accurate though. (Deprecated in 2017)
+
+EX: link:symphysismarketing.com
+9,480 results
+
+
+loc:placename
+Find results from a given area.
+
+EX: loc:”san francisco” privately owned public space
+8 results
+SIDENOTE. Not officially deprecated, but results are inconsistent.
+
+
+//
+location specific search
+[search term][space][city or zip code]
+EX: privately owned public space san francisco
+8,000,000 results
+
+EX: privately owned public space 94109
+406,000 results
+
+[search term][space][near me]
+EX: privately owned public space near me
+2,820,000,000 results
+
+https://locationiq.com/docs
+my token:
+pk.a18e937e08f5cd1f7431e37f6d6e4974
+EX:
+GET https://us1.locationiq.com/v1/balance.php?key=YOUR_ACCESS_TOKEN&format=json

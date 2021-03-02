@@ -19,6 +19,43 @@ let elapsedSeconds;
 
 // variable for api4 might want to put it with in, not up here
 let jsonResult = [];
+let fileName = "";
+let cityName = "";
+
+async function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                console.log('Use GPS location');
+                // Free usage 5000 requests per day
+                fetch(`https://us1.locationiq.com/v1/reverse.php?key=pk.a18e937e08f5cd1f7431e37f6d6e4974&lat=${position.coords.latitude}&lon=${position.coords.longitude}&format=json`)
+                .then(res => res.json())
+                .then(location => {
+                    cityName = location.address.city;
+                    console.log('city: ', location.address.city);
+                    return location.address.city;;
+                })
+            },
+            () => {
+                console.log('GPS location not available, use ip location');
+                // Free usage 50000 requests per month. else return 429 HTTP status code
+                fetch('https://ipinfo.io/json?token=c6d7eb39fe299f')
+                // Free usage 30000 requests per month (1000 in 24 hours), NO latitude, longitude
+                // fetch('https://ipapi.co/json')
+                .then(res => res.json())
+                .then(location => {
+                    cityName = location.city;
+                    console.log('city: ', location.city);
+                    return location.city;
+                })
+            }
+        )
+    }else{
+        return "";
+    }
+}
+// get geolocation while page load
+getLocation();
 
 // copy JSON result to clipboard, I use "textarea" to maintain text format
 // "input" will be string
@@ -51,7 +88,7 @@ const convertAndDownloadPDF = (jsonResult) => {
         body: [...data],
         // columnStyles: {0: {cellWidth: 150}}
     })
-    doc.save('test.pdf')
+    doc.save(fileName+'.pdf')
 };
 
 // html attribute download file
@@ -89,7 +126,7 @@ const convertAndDownloadCSV = (jsonResult) => {
         }
             str += line + '\r\n';
     }
-    download('test.csv', str);
+    download(fileName+'.csv', str);
 };
 
 // add downloadable buttons PDF CSV before scrape result
@@ -334,7 +371,8 @@ const getScrape6 = async (backendRoute6, formObj) => {
                 'Accept': 'application/json'
             }
         });
-
+        fileName = formObj.targetPage3 || "";
+        console.log('formObj',formObj.targetPage3);
         console.log('response',response);
         let json = await response.json();
         console.log('json',json);
@@ -415,8 +453,13 @@ const getScrape8 = async (backendRoute8, formObj) => {
 
 // submit button clicked, pass form data into scrape function and invoke it
 $(function(){
-    
+    $(window).on('load',function () {
+        setTimeout(function(){
+            $('body').fadeIn('slow', function () {});
+        },2000);
+    });
     $("#button1").on("click", function(){
+        console.log("cityName", cityName);
         let formArr = $("#form1").serializeArray();
         // console.log('formArr',formArr);
         // convert form array of objects to an object of properties
@@ -424,6 +467,7 @@ $(function(){
             map[obj.name] = obj.value;
             return map;
         }, {});
+        formObj.searchKey = formObj.searchKey + " " + cityName;
         document.getElementById('result-list').innerHTML = 
         '<p style="color:blue;font-size:46px;"><strong> ... Find related searchs please wait ... </strong></p>';
 	    console.log('formObj',formObj);
