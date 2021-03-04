@@ -467,7 +467,9 @@ $(function(){
             map[obj.name] = obj.value;
             return map;
         }, {});
-        formObj.searchKey = formObj.searchKey + " " + cityName;
+        if(formObj.currentCity == "yes"){
+            formObj.searchKey = formObj.searchKey + " " + cityName;
+        }
         document.getElementById('result-list').innerHTML = 
         '<p style="color:blue;font-size:46px;"><strong> ... Find related searchs please wait ... </strong></p>';
 	    console.log('formObj',formObj);
