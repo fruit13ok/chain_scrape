@@ -19,7 +19,7 @@ const sitemap = new Sitemapper();
 // local
 const app = express();
 const controller = new AbortController();
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 80; //8000;
 
 // [SOLUTION] to node-fetch problem, work together with abort request, and catch block,
 // FetchError Hostname/IP does not match certificate's altnames ERR_TLS_CERT_ALTNAME_INVALID
