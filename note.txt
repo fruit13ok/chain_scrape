@@ -56,6 +56,8 @@ npm install
 // test run (will end when logout droplet)
 node server
 go to http://165.232.52.237:8000/
+or 
+http://scraper.evocentric.com/
 click details, click visit this unsafe site
 // end server
 control-c
@@ -725,3 +727,9 @@ my token:
 pk.a18e937e08f5cd1f7431e37f6d6e4974
 EX:
 GET https://us1.locationiq.com/v1/balance.php?key=YOUR_ACCESS_TOKEN&format=json
+
+
+
+
+///////////////////////////////// SSL digital ocean //////////////////////////////////////
+change port from 8000 to 80 for both app.js and index.js 

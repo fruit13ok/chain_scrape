@@ -1,7 +1,8 @@
 console.log("Sanity Check: JS is working!");
 // let domain = "localhost";
 let domain = "165.232.52.237";   // scraperserver droplet (new)
-let port = 80; //8000;
+let port = 8000;
+// let port = 80;
 
 let backendRoute = new URL("http://"+domain+":"+port+"/api");
 let backendRoute2 = new URL("http://"+domain+":"+port+"/api2");
@@ -333,7 +334,8 @@ const getScrape4 = async (backendRoute4, formObj) => {
                 'Accept': 'application/json'
             }
         });
-
+        fileName = formObj.targetPage1 || "";
+        console.log('formObj',formObj.targetPage1);
         console.log('response',response);
         let json = await response.json();
         console.log('json',json);
@@ -363,7 +365,8 @@ const getScrape5 = async (backendRoute5, formObj) => {
                 'Accept': 'application/json'
             }
         });
-
+        fileName = formObj.targetPage2 || "";
+        console.log('formObj',formObj.targetPage2);
         console.log('response',response);
         let json = await response.json();
         console.log('json',json);

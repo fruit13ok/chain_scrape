@@ -19,7 +19,8 @@ const sitemap = new Sitemapper();
 // local
 const app = express();
 const controller = new AbortController();
-const port = process.env.PORT || 80; //8000;
+const port = process.env.PORT || 8000;
+// const port = process.env.PORT || 80;
 
 // [SOLUTION] to node-fetch problem, work together with abort request, and catch block,
 // FetchError Hostname/IP does not match certificate's altnames ERR_TLS_CERT_ALTNAME_INVALID
@@ -52,6 +53,13 @@ app.listen(port, () => {
 });
 
 // helper functions
+// Mac code is 'darwin', for scrolling, mouse scroll up, scroll bar move down
+function isMac(){
+    if(process.platform == 'darwin'){
+        return 1;
+    }
+    return -1;
+}
 
 // need Json result to be single level deep, change "businesshours" to "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
 var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -278,6 +286,8 @@ const loopClickCompResult = async (page, navigationPromise) => {
     var businesshours = [];
     var tmpBHours = [];
     var companyJson = {};
+
+    var resultHeight = 0;
     // regular expression for full address
     const regexAddress = /\d+ \d*\w+ \w+.*, \w+, \w+ \d+/g;
     // regular expression for domain name
@@ -286,17 +296,51 @@ const loopClickCompResult = async (page, navigationPromise) => {
     const regexPhoneNum = /((\d)\D)?(\(?(\d\d\d)\)?)?\D(\d\d\d)\D(\d\d\d\d)/g;
 
     // need to reevaluate number of results, sometime will keep using firsttime result, I applied backup plan
+    var numOfCurResultSelector = '';
     try {
-        await page.waitForSelector('div.section-result-content');
-        var numOfCurResult = Array.from(await page.$$('div.section-result-content')).length;
-        await page.waitForTimeout(renInt(500, 600));
+        // await page.waitForSelector('div.section-result-content');
+        // var numOfCurResult = Array.from(await page.$$('div.section-result-content')).length;
+        // await page.waitForTimeout(renInt(500, 600));
+        // console.log("# of results this page: ", numOfCurResult);
+
+        await page
+        .waitForSelector('.place-result-container-place-link', { timeout: 5000 })
+        .then(() => {
+            numOfCurResultSelector='.place-result-container-place-link';
+            console.log("ncrs:",numOfCurResultSelector)
+        }).catch((error) => console.log("try differ selector"));
+        await page
+        .waitForSelector('.section-result', { timeout: 5000 })
+        .then(() => {
+            numOfCurResultSelector='.section-result';
+            console.log("ncrs:",numOfCurResultSelector);
+        }).catch((error) => console.log("try differ selector"));
+        await page.waitForTimeout(renInt(1000, 1500));
+
+        // point mouse at scroll bar, scroll a few times to load rest of the 20 results
+        await page.hover('div.section-layout.section-scrollbox');
+        if(resultHeight == 0){
+            await page.mouse.wheel({deltaY: isMac()*1500});
+            await page.waitForTimeout(renInt(1000, 1500));
+            await page.mouse.wheel({deltaY: isMac()*1500});
+            await page.waitForTimeout(renInt(1000, 1500));
+            await page.mouse.wheel({deltaY: isMac()*1500});
+            await page.waitForTimeout(renInt(1000, 1500));
+        }
+
+        // await page.waitForSelector(numOfCurResultSelector);
+        var numOfCurResult = Array.from(await page.$$(numOfCurResultSelector)).length;
+        await page.waitForTimeout(renInt(1000, 1500));
         console.log("# of results this page: ", numOfCurResult);
 
         // click to each result, scrape that result page, go back to previous page
         for(var i=0; i<numOfCurResult; i++){
-        // for(var i=0; i<2; i++){
-            await page.waitForSelector('div.section-result-content'); 
-            var arrOfElements = await page.$$('div.section-result-content');
+        // for(var i=0; i<3; i++){
+            // await page.waitForSelector('div.section-result-content'); 
+            // var arrOfElements = await page.$$('div.section-result-content');
+            console.log("ncrs:",numOfCurResultSelector)
+            await page.waitForSelector(numOfCurResultSelector);
+            var arrOfElements = await page.$$(numOfCurResultSelector);
             await page.waitForTimeout(renInt(500, 600));
             // when console log show i but not each content, it is ok,
             // that mean it didn't count the current page result size
@@ -1004,6 +1048,7 @@ app.post('/api5', async function (req, res) {
 });
 
 let scrape6 = async (searchKey) => {
+    var searchboxSelector = '';
     // don't blocked resource types to improve speed, google maps needs most of them to work
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox'], ignoreHTTPSErrors: true , slowMo: 100}); // need for real server, need image for map, so no '--blink-settings=imagesEnabled=false'
     // var browser = await puppeteer.launch({headless: false, ignoreHTTPSErrors: true, slowMo: 100});
@@ -1036,8 +1081,38 @@ let scrape6 = async (searchKey) => {
         console.log("No Error, no popup upgrade message");
     }
     await page.waitForTimeout(renInt(500, 600));
-    
-    await page.type('input#searchboxinput', searchKey, { delay: 100 });
+    try {
+        await page.waitForXPath("//span[contains(text(), 'Use the app')]", { timeout: 5000 }); // default 30000
+        const stayOnWebBtn = await page.$x("//span[contains(text(), 'No thanks')]");
+        console.log('test');
+        await stayOnWebBtn[0].click(); // try to use click as hover
+        await navigationPromise;
+        await page.waitForTimeout(renInt(500, 600));
+    } catch(error) {
+        console.log("No Error, no popup map app message");
+    }
+    await page.waitForTimeout(renInt(500, 600));
+
+    // after close popup, input box is a div, if so change selector
+    await page
+    .waitForSelector('input#searchboxinput', { timeout: 5000 })
+    .then(() => {
+        searchboxSelector='input#searchboxinput';
+        console.log("sbs:",searchboxSelector)
+    }).catch((error) => console.log("try differ selector"));
+    await page
+    .waitForSelector('div.ml-searchbox-button-placeholder', { timeout: 5000 })
+    .then(() => {
+        searchboxSelector='div.ml-searchbox-button-placeholder';
+        console.log("sbs:",searchboxSelector)
+    }).catch((error) => console.log("try differ selector"));
+    await page.waitForTimeout(renInt(1000, 1500));
+
+    var searchbox =await page.$(searchboxSelector);
+    searchbox.click();
+    await page.waitForTimeout(renInt(500, 1000));
+    // await page.type('input#searchboxinput', searchKey, { delay: 100 });
+    await page.type(searchboxSelector, searchKey, { delay: 100 });
     // await page.type('input[title="Search"]', searchKey);
     await page.keyboard.press('Enter');
     await navigationPromise;
