@@ -527,7 +527,7 @@ const loopUrlsForH1H2 = async (page, navigationPromise, urls) => {
     let curUrl = '';
     for (let i = 0; i < urls.length; i++) {
         curUrl = urls[i];
-        response = await page.goto(curUrl, { timeout: 10000, waitUntil: 'load' });
+        response = await page.goto(curUrl, { timeout: 30000, waitUntil: 'load' });
         await navigationPromise;
         await page.waitForTimeout(renInt(1000, 2000));
         numOfH1 = await page.evaluate((selector) => {
@@ -1061,7 +1061,7 @@ let scrape6 = async (searchKey) => {
     await page.setUserAgent(userAgent.random().toString());
     await page.setDefaultNavigationTimeout(0);
     try {
-        await page.goto('https://www.google.com/maps/', { timeout: 10000, waitUntil: 'networkidle2', });
+        await page.goto('https://www.google.com/maps/', { timeout: 30000, waitUntil: 'networkidle2', });
         await navigationPromise;
         await page.waitForTimeout(renInt(5000, 6000));
     } catch(error) {
@@ -1281,7 +1281,7 @@ let scrape8 = async (targetPage) => {
     // await page.setUserAgent(userAgent.random().toString());
     // await page.setDefaultNavigationTimeout(0);   // use when set your own timeout
 
-    await page.goto(targetPage, { timeout: 10000, waitUntil: 'load' });
+    await page.goto(targetPage, { timeout: 30000, waitUntil: 'load' });
     await navigationPromise;
 
     await page.waitForTimeout(renInt(500, 600));
