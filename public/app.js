@@ -1,8 +1,10 @@
 console.log("Sanity Check: JS is working!");
 // let domain = "localhost";
 let domain = "165.232.52.237";   // scraperserver droplet (new)
-// let port = 8000;
-let port = 80;
+// let port = 8443;
+// let port = 8080;
+let port = 443;
+// let port = 80;
 
 let backendRoute = new URL("http://"+domain+":"+port+"/api");
 let backendRoute2 = new URL("http://"+domain+":"+port+"/api2");

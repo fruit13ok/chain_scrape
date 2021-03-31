@@ -2,7 +2,14 @@
 
 // native
 const path = require('path');
+const http = require('http');
 const https = require('https');
+const fs = require('fs');
+
+// certificate for https server
+const privateKey = fs.readFileSync(path.join(__dirname, '../public/key.pem'), 'utf8');
+const certificate = fs.readFileSync(path.join(__dirname, '../public/cert.pem'), 'utf8');
+const credentials = {key: privateKey, cert: certificate};
 
 // 3rd party
 const express = require('express');
@@ -20,7 +27,14 @@ const sitemap = new Sitemapper();
 const app = express();
 const controller = new AbortController();
 // const port = process.env.PORT || 8000;
-const port = process.env.PORT || 80;
+// const httpport = process.env.HTTPPORT || 8080; // 80;
+// const httpsport = process.env.HTTPSPORT || 8443; // 443;
+const httpport = process.env.HTTPPORT || 80;
+const httpsport = process.env.HTTPSPORT || 443;
+
+// https express configuration
+const httpServer = http.createServer(app);
+const httpsServer = https.createServer(credentials, app);
 
 // [SOLUTION] to node-fetch problem, work together with abort request, and catch block,
 // FetchError Hostname/IP does not match certificate's altnames ERR_TLS_CERT_ALTNAME_INVALID
@@ -40,6 +54,10 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+
+
+
+
 // allow cors to access this backend
 app.use( (req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
@@ -48,9 +66,12 @@ app.use( (req, res, next) => {
 });
 
 // INIT SERVER
-app.listen(port, () => {
-    console.log(`Started on port ${port}`);
-});
+// for localhost
+// app.listen(port, () => {console.log(`Started on localhost port ${port}`); });
+// for http
+httpServer.listen(httpport, () => {console.log(`Started on http port ${httpport}`); });
+// // for https
+httpsServer.listen(httpsport, () => {console.log(`Started on https port ${httpsport}`); });
 
 // helper functions
 // Mac code is 'darwin', for scrolling, mouse scroll up, scroll bar move down
