@@ -7,14 +7,14 @@ let domain = "165.232.52.237";   // scraperserver droplet (new)
 let port = 443;
 // let port = 80;
 
-let backendRoute = new URL("http://"+domain+":"+port+"/api");
-let backendRoute2 = new URL("http://"+domain+":"+port+"/api2");
-let backendRoute3 = new URL("http://"+domain+":"+port+"/api3");
-let backendRoute4 = new URL("http://"+domain+":"+port+"/api4");
-let backendRoute5 = new URL("http://"+domain+":"+port+"/api5");
-let backendRoute6 = new URL("http://"+domain+":"+port+"/api6");
-let backendRoute7 = new URL("http://"+domain+":"+port+"/api7");
-let backendRoute8 = new URL("http://"+domain+":"+port+"/api8");
+let backendRoute = new URL("https://"+domain+":"+port+"/api");
+let backendRoute2 = new URL("https://"+domain+":"+port+"/api2");
+let backendRoute3 = new URL("https://"+domain+":"+port+"/api3");
+let backendRoute4 = new URL("https://"+domain+":"+port+"/api4");
+let backendRoute5 = new URL("https://"+domain+":"+port+"/api5");
+let backendRoute6 = new URL("https://"+domain+":"+port+"/api6");
+let backendRoute7 = new URL("https://"+domain+":"+port+"/api7");
+let backendRoute8 = new URL("https://"+domain+":"+port+"/api8");
 
 // this frontend scrape function do post request to backend scrape route,
 // pass in back end route and form object of search key and search depth
