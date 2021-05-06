@@ -67,7 +67,7 @@ app.use( (req, res, next) => {
 
 // INIT SERVER
 // for localhost
-// app.listen(port, () => {console.log(`Started on localhost port ${port}`); });
+app.listen(port, () => {console.log(`Started on localhost port ${port}`); });
 // for http
 httpServer.listen(httpport, () => {console.log(`Started on http port ${httpport}`); });
 // for https
