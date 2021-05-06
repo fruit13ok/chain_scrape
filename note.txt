@@ -77,6 +77,8 @@ pm2 reload server/index.js
 pm2 restart server/index.js
 
 
+// Evocentric Dashboard on gitlab
+https://gitlab.com/evocentric-development/evocentric-dashboard
 
 /////////// 5-9-2020 ////////////
 
@@ -683,6 +685,14 @@ Yemen	ye
 Zambia	zm
 Zimbabwe	zw
 
+// other google search tips
+https://www.lifehack.org/articles/technology/20-tips-use-google-search-efficiently.html
+https://www.youtube.com/watch?v=yWLD9139Ipc
+https://www.youtube.com/watch?v=erZ3IyBCXdY
+https://www.youtube.com/watch?v=s9XZk9CLxK4
+https://www.youtube.com/watch?v=U9TNmomU7l0
+
+
 
 ///////////////////////////// search box filter keyword ///////////////////////////////
 
@@ -730,6 +740,26 @@ GET https://us1.locationiq.com/v1/balance.php?key=YOUR_ACCESS_TOKEN&format=json
 
 
 
+// check MEMORY LEAK
+https://medium.com/@paul_irish/debugging-node-js-nightlies-with-chrome-devtools-7c4a1b95ae27
+https://kontra.agency/nodejs-memory-leak-hunt-memwatch-heapdump/
+https://www.nearform.com/blog/how-to-self-detect-a-memory-leak-in-node/
+https://nodejs.org/en/docs/guides/debugging-getting-started/
+https://blog.appsignal.com/2020/05/06/avoiding-memory-leaks-in-nodejs-best-practices-for-performance.html
+https://www.youtube.com/watch?v=L3ugr9BJqIs
+https://github.com/akras14/memory-leak-example
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Memory_Management
+https://www.codingdefined.com/2015/09/how-to-detect-memory-leak-in-nodejs.html
+https://www.cloudbees.com/blog/understanding-garbage-collection-in-node-js/
+https://blog.risingstack.com/finding-a-memory-leak-in-node-js/
+https://blog.risingstack.com/node-js-at-scale-node-js-garbage-collection/#nodejsgarbagecollectionmemorymanagementinpractice
+https://medium.com/@vuongtran/how-to-solve-process-out-of-memory-in-node-js-5f0de8f8464c
+
+
 
 ///////////////////////////////// SSL digital ocean //////////////////////////////////////
 change port from 8000 to 80 for both app.js and index.js 
+
+https://ourcodeworld.com/articles/read/343/how-to-create-required-pem-certificates-for-https-connection-in-node-web-server
+https://nodejs.org/en/knowledge/HTTP/servers/how-to-create-a-HTTPS-server/
+

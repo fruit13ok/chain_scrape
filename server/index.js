@@ -26,11 +26,11 @@ const sitemap = new Sitemapper();
 // local
 const app = express();
 const controller = new AbortController();
-// const port = process.env.PORT || 8000;
-// const httpport = process.env.HTTPPORT || 8080; // 80;
-// const httpsport = process.env.HTTPSPORT || 8443; // 443;
-const httpport = process.env.HTTPPORT || 80;
-const httpsport = process.env.HTTPSPORT || 443;
+const port = process.env.PORT || 8000;
+const httpport = process.env.HTTPPORT || 8080; // 80;
+const httpsport = process.env.HTTPSPORT || 8443; // 443;
+// const httpport = process.env.HTTPPORT || 80;
+// const httpsport = process.env.HTTPSPORT || 443;
 
 // https express configuration
 const httpServer = http.createServer(app);
@@ -70,7 +70,7 @@ app.use( (req, res, next) => {
 // app.listen(port, () => {console.log(`Started on localhost port ${port}`); });
 // for http
 httpServer.listen(httpport, () => {console.log(`Started on http port ${httpport}`); });
-// // for https
+// for https
 httpsServer.listen(httpsport, () => {console.log(`Started on https port ${httpsport}`); });
 
 // helper functions
@@ -308,7 +308,6 @@ const loopClickCompResult = async (page, navigationPromise) => {
     var tmpBHours = [];
     var companyJson = {};
 
-    var resultHeight = 0;
     // regular expression for full address
     const regexAddress = /\d+ \d*\w+ \w+.*, \w+, \w+ \d+/g;
     // regular expression for domain name
@@ -324,30 +323,33 @@ const loopClickCompResult = async (page, navigationPromise) => {
         // await page.waitForTimeout(renInt(500, 600));
         // console.log("# of results this page: ", numOfCurResult);
 
+        await page.waitForTimeout(renInt(1000, 1500));
+        await page.hover('div.section-layout.section-scrollbox')
+        .then(()=>console.log('found scrollbox'));
+        await page.mouse.wheel({deltaY: isMac()*1600});
+        await page.waitForTimeout(renInt(1000, 1500));
+        await page.mouse.wheel({deltaY: isMac()*1600});
+        await page.waitForTimeout(renInt(1000, 1500));
+        await page.mouse.wheel({deltaY: isMac()*1600});
+        await page.waitForTimeout(renInt(1000, 1500));
+        await page.mouse.wheel({deltaY: isMac()*1600});
+        await page.waitForTimeout(renInt(1000, 1500));
+
         await page
         .waitForSelector('.place-result-container-place-link', { timeout: 5000 })
         .then(() => {
             numOfCurResultSelector='.place-result-container-place-link';
-            console.log("ncrs:",numOfCurResultSelector)
+            console.log("number of current results selector:",numOfCurResultSelector)
         }).catch((error) => console.log("try differ selector"));
         await page
         .waitForSelector('.section-result', { timeout: 5000 })
         .then(() => {
             numOfCurResultSelector='.section-result';
-            console.log("ncrs:",numOfCurResultSelector);
+            console.log("number of current results selector:",numOfCurResultSelector);
         }).catch((error) => console.log("try differ selector"));
         await page.waitForTimeout(renInt(1000, 1500));
 
         // point mouse at scroll bar, scroll a few times to load rest of the 20 results
-        await page.hover('div.section-layout.section-scrollbox');
-        if(resultHeight == 0){
-            await page.mouse.wheel({deltaY: isMac()*1500});
-            await page.waitForTimeout(renInt(1000, 1500));
-            await page.mouse.wheel({deltaY: isMac()*1500});
-            await page.waitForTimeout(renInt(1000, 1500));
-            await page.mouse.wheel({deltaY: isMac()*1500});
-            await page.waitForTimeout(renInt(1000, 1500));
-        }
 
         // await page.waitForSelector(numOfCurResultSelector);
         var numOfCurResult = Array.from(await page.$$(numOfCurResultSelector)).length;
@@ -356,10 +358,19 @@ const loopClickCompResult = async (page, navigationPromise) => {
 
         // click to each result, scrape that result page, go back to previous page
         for(var i=0; i<numOfCurResult; i++){
-        // for(var i=0; i<3; i++){
-            // await page.waitForSelector('div.section-result-content'); 
-            // var arrOfElements = await page.$$('div.section-result-content');
-            console.log("ncrs:",numOfCurResultSelector)
+        // for(var i=0; i<7; i++){
+
+            await page.waitForTimeout(renInt(500, 600));
+            await page.hover('div.section-layout.section-scrollbox');
+            await page.mouse.wheel({deltaY: isMac()*1600});
+            await page.waitForTimeout(renInt(1000, 1500));
+            await page.mouse.wheel({deltaY: isMac()*1600});
+            await page.waitForTimeout(renInt(1000, 1500));
+            await page.mouse.wheel({deltaY: isMac()*1600});
+            await page.waitForTimeout(renInt(1000, 1500));
+            await page.mouse.wheel({deltaY: isMac()*1600});
+            await page.waitForTimeout(renInt(1000, 1500));
+
             await page.waitForSelector(numOfCurResultSelector);
             var arrOfElements = await page.$$(numOfCurResultSelector);
             await page.waitForTimeout(renInt(500, 600));
@@ -372,21 +383,24 @@ const loopClickCompResult = async (page, navigationPromise) => {
                 await navigationPromise;
                 await page.waitForTimeout(renInt(500, 600));
 
-                await page.waitForSelector('.section-hero-header-image-hero-container.collapsible-hero-image img');
+                await page.waitForSelector('.section-hero-header-image-hero-container.collapsible-hero-image img')
+                .then(()=>console.log('found logo selector'));
                 logo = await page.evaluate((selector) => {
                     let el = document.querySelector(selector);
                     return el ? el.getAttribute('src').replace('//', '') : "image error";
                 }, '.section-hero-header-image-hero-container.collapsible-hero-image img');
                 await page.waitForTimeout(renInt(500, 600));
 
-                await page.waitForSelector('div.section-hero-header-title-description');
+                await page.waitForSelector('div > span > span > button.widget-pane-link')
+                .then(()=>console.log('found category selector'));
                 category = await page.evaluate((selector) => {
                     let el = document.querySelector(selector);
                     return el ? el.innerText.split(/\r?\n/).pop() : "category error";
-                }, 'div.section-hero-header-title-description');
+                }, 'div > span > span > button.widget-pane-link');
                 await page.waitForTimeout(renInt(500, 600));
 
-                await page.waitForSelector('.section-hero-header-title-title');
+                await page.waitForSelector('.section-hero-header-title-title')
+                .then(()=>console.log('found name selector'));
                 name = await page.evaluate((selector) => {
                     let el = document.querySelector(selector);
                     return el ? el.innerText.replace(/,/g, '') : "name error";
@@ -394,19 +408,22 @@ const loopClickCompResult = async (page, navigationPromise) => {
                 await page.waitForTimeout(renInt(500, 600));
 
                 try {
-                    await page.waitForXPath("//div[contains(text(), 'Share')]", { timeout: 5000 }); // default 30000
+                    await page.waitForXPath("//div[contains(text(), 'Share')]", { timeout: 5000 })
+                    .then(()=>console.log('found shareBtn')); // default 30000
                     const shareBtn = await page.$x("//div[contains(text(), 'Share')]");
                     await shareBtn[0].click(); // try to use click as hover
                     await navigationPromise;
                     await page.waitForTimeout(renInt(500, 600));
 
-                    await page.waitForSelector('input.section-copy-link-input');
+                    await page.waitForSelector('.section-copy-link-input')
+                    .then(()=>console.log('found mapID'));
                     mapID = await page.evaluate((selector) => {
                         let el = document.querySelector(selector);
                         return el ? el.value : "no mapID error";
-                    }, 'input.section-copy-link-input');
+                    }, '.section-copy-link-input');
                     await page.waitForTimeout(renInt(500, 600));
-                    await page.waitForSelector('button[aria-label="Close"]');
+                    await page.waitForSelector('button[aria-label="Close"]')
+                    .then(()=>console.log('found closeBtn'));
                     closeBtn = await page.$('button[aria-label="Close"]');
                     await page.waitForTimeout(renInt(500, 600));
                     if(closeBtn){
@@ -421,12 +438,12 @@ const loopClickCompResult = async (page, navigationPromise) => {
 
                 // array of string company data, array size will differ by differ company
                 // I use regex to parse data
-                await page.waitForSelector('.ugiz4pqJLAG__primary-text.gm2-body-2');
-                
+                await page.waitForSelector('.mapsConsumerUiSubviewSectionGm2Listitem__primary-text.gm2-body-2')
+                .then(()=>console.log('found divTexts'));
                 divTexts = await page.evaluate((selector) => {
                     let els = Array.from(document.querySelectorAll(selector));
                     return els ? els.map(el => el.innerText) : "divTexts error";
-                }, '.ugiz4pqJLAG__primary-text.gm2-body-2');
+                }, '.mapsConsumerUiSubviewSectionGm2Listitem__primary-text.gm2-body-2');
                 await page.waitForTimeout(renInt(500, 600));
                 if(divTexts != "divTexts error"){
                     console.log(divTexts);
@@ -450,7 +467,8 @@ const loopClickCompResult = async (page, navigationPromise) => {
                 // document.querySelector('.section-open-hours-button').click();
                 // document.querySelector('.section-open-hours-container').innerText;
                 try {
-                    await page.waitForSelector('.section-open-hours-button', { timeout: 5000 }); // default 30000
+                    await page.waitForSelector('.section-open-hours-button', { timeout: 5000 })
+                    .then(()=>console.log('found dropdownListBtn')); // default 30000
                     dropdownListBtn = await page.$('.section-open-hours-button');
                     await page.waitForTimeout(renInt(500, 600));
                     if(dropdownListBtn){
@@ -458,7 +476,8 @@ const loopClickCompResult = async (page, navigationPromise) => {
                         await navigationPromise;
                         await page.waitForTimeout(renInt(2000, 3000));
                     }
-                    await page.waitForSelector('.section-open-hours-container');
+                    await page.waitForSelector('.section-open-hours-container')
+                    .then(()=>console.log('found tmpBHours'));
                     tmpBHours = await page.evaluate((selector) => {
                         let el = document.querySelector(selector);
                         return el ? el.innerText : "no businesshours error";
@@ -490,6 +509,7 @@ const loopClickCompResult = async (page, navigationPromise) => {
                 } catch(error) {
                     console.log("Error, no business hour");
                 }
+                await page.waitForTimeout(renInt(500, 600));
 
                 // company data formet
                 companyJson = {name: name, category: category, address: address, phonenumber: phonenumber, website: website, logo: logo, mapID: mapID, ...formatBusinesshours(businesshours)};
@@ -510,6 +530,8 @@ const loopClickCompResult = async (page, navigationPromise) => {
                 // await page.goBack();     // don't use page.goBack(), instead select the back button and click it
                 // await navigationPromise;
                 // await page.waitForTimeout(renInt(1000, 2000));
+            } else {
+                console.log("company: ", i, Array.from(arrOfElements)[i]);
             }
         }
     } catch(error) {
