@@ -27,10 +27,10 @@ const sitemap = new Sitemapper();
 const app = express();
 const controller = new AbortController();
 const port = process.env.PORT || 8000;
-const httpport = process.env.HTTPPORT || 8080; // 80;
-const httpsport = process.env.HTTPSPORT || 8443; // 443;
-// const httpport = process.env.HTTPPORT || 80;
-// const httpsport = process.env.HTTPSPORT || 443;
+// const httpport = process.env.HTTPPORT || 8080; // 80;
+// const httpsport = process.env.HTTPSPORT || 8443; // 443;
+const httpport = process.env.HTTPPORT || 80;
+const httpsport = process.env.HTTPSPORT || 443;
 
 // https express configuration
 const httpServer = http.createServer(app);
